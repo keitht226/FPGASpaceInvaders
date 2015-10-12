@@ -110,6 +110,8 @@ int main()
      char key;
      time_t seed;
      score = 0;
+     lives = 3;
+     mothershipSpawnCounter = 0;
      srand((unsigned)time(&seed));
      /*          end initialization               */
 

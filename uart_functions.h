@@ -9,11 +9,13 @@ void uart_commands();
 void moveTankLeft();
 void moveTankRight();
 void moveAlienBlock();
-void killAlien();
+void killAlien(unsigned short x, unsigned short y);
 void newTankBullet();
 void newAlienBullet();
 void updateBullets();
-void erodeBunker();
+void erodeBunker(unsigned short x, unsigned short y);
+void killTank();
+void killMothership();
 
 
 

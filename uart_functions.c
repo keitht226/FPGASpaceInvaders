@@ -65,17 +65,21 @@ void moveAlienBlock(){
   return;/*}}}*/
 }
 
-/*TODO call this function from updateBullets. No longer killed by user input. Passed x,y arguments from update bullets
+/* call this function from updateBullets. No longer killed by user input. Passed x,y arguments from update bullets
  * must find out which alien is represented by those coordinates, then update boolean array. Increase score
 */
+//TODO add draw alien explosion function
 void killAlien(unsigned short x, unsigned short y){
   /*{{{*/
   
   col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE);
   row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION);
-
+  unsigned int alien = col + (row * 11);
+  globals_DeadAliens[alien] = true; //kill the alien
+  //TODO draw alien 'splosion
   //redraw alien block (preferably only the alien that died)
   write_alien_block_to_memory();
+  score += ALIEN_SCORE;
   return;/*}}}*/
 }
 
@@ -216,25 +220,55 @@ void updateBullets(){
   return;/*}}}*/
 }
 
-/*TODO take in x,y parameters from updateBullets. Find out which part of the bunker was hit and change the destruction level of that portion
-void erodeBunker(){
-  xil_printf("Enter number from 0-3 to choose a bunker to damage\n\r");/*{{{*/
-  char bunkerID = getchar();
-  int bunker_id = atoi(&bunkerID);
-  //increase destruciton level
-  int i;
-  for(i = 0; i< 12;i++){
-	  //don't increment if we're already at 4 damage
-	  if(globals_bunkers[bunker_id].quadrants[i].destruction_level != MAX_EROSION) {
-		  ++(globals_bunkers[bunker_id].quadrants[i].destruction_level);//increase destruction of all pieces at once
-	  }
+/* take in x,y parameters from updateBullets. Find out which part of the bunker was hit and change the destruction level of that portion*/
+//TODO test. Otherwise completed
+void erodeBunker(unsigned short x, unsigned short y){
+  unsigned int id;
+  unsigned int bunker_x;
+  unsigned int region;
+  //find out which bunker was hit
+  if(x > BUNKER_3){
+    id = 3;
+    bunker_x = BUNKER_3;
   }
-  //redraw bunker with damage
+  else if(x > BUNKER_2){
+    id = 2;
+    bunker_x = BUNKER_2;
+  }
+  else if(x > BUNKER_1){
+    id = 1;
+    bunker_x = BUNKER_1;
+  }
+  else{
+    id = 0;
+    bunker_x = BUNKER_0;
+  }
+  //find out which region of the bunker was hit. 3 rows, 4 cols
+  col = (x - bunker_x) / WIDTH_BUNKER;
+  row = (y - BUNKER_ROW_OFFSET) / BUNKER_HEIGHT;
+  region = col + (row * 4);
+  globals_bunkers[id].quadrants[region].destruction_level += 1;
   write_bunkers_to_memory();
   return;/*}}}*/
 }
 
-/*TODO make new functions:
+/* make new functions:
  * killTank(): destroys the tank and decrements lives. 
  * killMothership(): destroy mothership, restart mothership spawn counter, increase points
 */
+
+//ensure game pauses. Do 'splosion animation. Decrease lives. 
+//    ^ to do this, set global boolean here that will be looked at by FIT. FIT will loop in animation until completed
+void killTank(){
+  --lives;  
+  tank_death = running;
+  return;
+}
+
+//TODO add erase mothership function
+void killMothership(){
+  //erase mothership
+  score += MOTHERSHIP_SCORE;
+  mothershipSpawnCounter = 0;
+  return;
+}

@@ -100,6 +100,19 @@
 /*****************      lab4 macros and globals       ********************************************************************/
 #define Y_MIN 30 //considered offscreen if below this for bullets. They will disappear before hitting score or lives
 unsigned int score; //updated in killAliens() and killMothership()
+unsigned int lives; //updated in killTank() and when score = 1000
+unsigned short mothershipSpawnCounter;
+#define BUNKER_OFFSET 80U
+#define BUNKER_0 BUNKER_OFFSET
+#define BUNKER_1 BUNKER_OFFSET + (BUNKER_OFFSET * 1) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 1);
+#define BUNKER_2 BUNKER_OFFSET + (BUNKER_OFFSET * 2) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 2);
+#define BUNKER_3 BUNKER_OFFSET + (BUNKER_OFFSET * 3) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 3);
+#define BUNKER_WIDTH 48
+#define BUNKER_HEIGHT 36
+#define ALIEN_SCORE 100 //score for killing an alien
+#define MOTHERSHIP_SCORE 500 //score for killing mothership
+#define running 1
+#define stopped 0
 /****************       end lab4      *************/
 
 bool globals_DeadAliens[55]; //initialize all to be alive. True is dead, false is alive
@@ -118,7 +131,7 @@ typedef struct{
 } bullet_t;
 
 typedef struct{
-  uint8_t id;//identification from 0-3
+  uint8_t id;//identification from 0-11
   uint8_t destruction_level;//0-4. 0 is undamaged, 4 is completely destroyed
 } quadrant;
 
