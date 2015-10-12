@@ -1,0 +1,187 @@
+
+
+/*
+ * helloworld.c: simple test application
+ */
+
+#include <stdio.h>
+#include "platform.h"
+#include "xparameters.h"
+#include "xaxivdma.h"
+#include "xio.h"
+#include "time.h"
+#include "unistd.h"
+#include "globals.h"
+#include "ScreenFunctions.h"
+#include "uart_functions.h"
+#define DEBUG false
+void print(char *str);
+
+#define MAX_SILLY_TIMER 10000000
+
+
+int main()
+{
+	init_platform();                   // Necessary for all programs.
+	int Status;                        // Keep track of success/failure of system function calls.
+	XAxiVdma videoDMAController;
+	// There are 3 steps to initializing the vdma driver and IP.
+	// Step 1: lookup the memory structure that is used to access the vdma driver.
+    XAxiVdma_Config * VideoDMAConfig = XAxiVdma_LookupConfig(XPAR_AXI_VDMA_0_DEVICE_ID);
+    // Step 2: Initialize the memory structure and the hardware.
+    if(XST_FAILURE == XAxiVdma_CfgInitialize(&videoDMAController, VideoDMAConfig,	XPAR_AXI_VDMA_0_BASEADDR)) {
+    	xil_printf("VideoDMA Did not initialize.\r\n");
+    }
+    // Step 3: (optional) set the frame store number.
+    if(XST_FAILURE ==  XAxiVdma_SetFrmStore(&videoDMAController, 2, XAXIVDMA_READ)) {
+    	xil_printf("Set Frame Store Failed.");
+    }
+    // Initialization is complete at this point.
+
+    // Setup the frame counter. We want two read frames. We don't need any write frames but the
+    // function generates an error if you set the write frame count to 0. We set it to 2
+    // but ignore it because we don't need a write channel at all.
+    XAxiVdma_FrameCounter myFrameConfig;
+    myFrameConfig.ReadFrameCount = 2;
+    myFrameConfig.ReadDelayTimerCount = 10;
+    myFrameConfig.WriteFrameCount =2;
+    myFrameConfig.WriteDelayTimerCount = 10;
+    Status = XAxiVdma_SetFrameCounter(&videoDMAController, &myFrameConfig);
+    if (Status != XST_SUCCESS) {
+	   xil_printf("Set frame counter failed %d\r\n", Status);
+	   if(Status == XST_VDMA_MISMATCH_ERROR)
+		   xil_printf("DMA Mismatch Error\r\n");
+    }
+    // Now we tell the driver about the geometry of our frame buffer and a few other things.
+    // Our image is 480 x 640.
+    XAxiVdma_DmaSetup myFrameBuffer;
+    myFrameBuffer.VertSizeInput = 480;    // 480 vertical pixels.
+    myFrameBuffer.HoriSizeInput = 640*4;  // 640 horizontal (32-bit pixels).
+    myFrameBuffer.Stride = 640*4;         // Dont' worry about the rest of the values.
+    myFrameBuffer.FrameDelay = 0;
+    myFrameBuffer.EnableCircularBuf=1;
+    myFrameBuffer.EnableSync = 0;
+    myFrameBuffer.PointNum = 0;
+    myFrameBuffer.EnableFrameCounter = 0;
+    myFrameBuffer.FixedFrameStoreAddr = 0;
+    if(XST_FAILURE == XAxiVdma_DmaConfig(&videoDMAController, XAXIVDMA_READ, &myFrameBuffer)) {
+    	xil_printf("DMA Config Failed\r\n");
+     }
+    // We need to give the frame buffer pointers to the memory that it will use. This memory
+    // is where you will write your video data. The vdma IP/driver then streams it to the HDMI
+    // IP.
+     myFrameBuffer.FrameStoreStartAddr[0] = FRAME_BUFFER_0_ADDR;
+     myFrameBuffer.FrameStoreStartAddr[1] = FRAME_BUFFER_0_ADDR + 4*640*480;
+
+     if(XST_FAILURE == XAxiVdma_DmaSetBufferAddr(&videoDMAController, XAXIVDMA_READ,
+    		               myFrameBuffer.FrameStoreStartAddr)) {
+    	 xil_printf("DMA Set Address Failed Failed\r\n");
+     }
+     // Print a sanity message if you get this far.
+     xil_printf("Woohoo! I made it through initialization.\n\r");
+
+
+     //CODE WAS HERE
+     //init_monitor();
+
+
+
+     // This tells the HDMI controller the resolution of your display (there must be a better way to do this).
+     XIo_Out32(XPAR_AXI_HDMI_0_BASEADDR, 640*480);
+
+     // Start the DMA for the read channel only.
+     if(XST_FAILURE == XAxiVdma_DmaStart(&videoDMAController, XAXIVDMA_READ)){
+    	 xil_printf("DMA START FAILED\r\n");
+     }
+     int frameIndex = 0;
+     // We have two frames, let's park on frame 0. Use frameIndex to index them.
+     // Note that you have to start the DMA process before parking on a frame.
+     if (XST_FAILURE == XAxiVdma_StartParking(&videoDMAController, frameIndex,  XAXIVDMA_READ)) {
+    	 xil_printf("vdma parking failed\n\r");
+     }
+
+     /*        initialize variables               */
+     globals_setTankPosition(320);
+     globals_bullets[0].offScreen = true;
+     globals_bullets[1].offScreen = true;
+     globals_bullets[2].offScreen = true;
+     globals_bullets[3].offScreen = true;
+     init_monitor();
+     char key;
+     time_t seed;
+     score = 0;
+     srand((unsigned)time(&seed));
+     /*          end initialization               */
+
+    /************ lab4 setup interrupts and GPIO *************************/
+    int success;
+    //xil_printf("Check\n\r");
+    success = XGpio_Initialize(&gpPB, XPAR_PUSH_BUTTONS_5BITS_DEVICE_ID);
+    // Set the push button peripheral to be inputs.
+    XGpio_SetDataDirection(&gpPB, 1, 0x0000001F);
+    // Enable the global GPIO interrupt for push buttons.
+    XGpio_InterruptGlobalEnable(&gpPB);
+    // Enable all interrupts in the push button peripheral.
+    XGpio_InterruptEnable(&gpPB, 0xFFFFFFFF);
+
+    microblaze_register_handler(interrupt_handler_dispatcher, NULL);
+    XIntc_EnableIntr(XPAR_INTC_0_BASEADDR,
+    		(XPAR_FIT_TIMER_0_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK));
+    XIntc_MasterEnable(XPAR_INTC_0_BASEADDR);
+    microblaze_enable_interrupts();
+    /*********** end setup ***********************************************/
+
+     while (1) {
+    	    key = getchar();
+    	    switch(key){
+    	      case '4':
+    	        //move tank left by constant number of pixels.
+    	        moveTankLeft();
+    	        break;
+    	      case '6':
+    	        //same as above but to the right
+    	        moveTankRight();
+    	        break;
+    	      case '8':
+    	        //update alien position. Switch alien legs every time. Go Right then left. Down at every edge.
+    	        moveAlienBlock();
+    	        break;
+    	      case '2':
+    	        //kill alien. Query for a number between 0 and 54.
+    	        killAlien();
+    	        break;
+    	      case '5':
+    	        //fire tank bullet. set coordinate just above the tank turret
+    	        newTankBullet();
+    	        break;
+    	      case '3':
+    	        //fire random alien missile. Randomly pick from bottom row and randomly pick bullet type
+    	        newAlienBullet();
+    	        break;
+    	      case '9':
+    	        //update all bullets. Disappear and become available once off screen.
+    	        updateBullets();
+    	        break;
+    	      case '7':
+    	        //erode bunker. Query for a number between 0 and 3 and erode the bunker by one step.
+    	        erodeBunker();
+    	        break;
+    	      default:
+    	        xil_printf("warning: default case reached in uart_commands. Enter 4,6,8,2,5,3,9, or 7\n\r");
+    	        break;
+    	    }
+    	 //while (sillyTimer) sillyTimer--;    // Decrement the timer.
+    	 //sillyTimer = MAX_SILLY_TIMER;       // Reset the timer.
+         //frameIndex = (frameIndex + 1) % 2;  // Alternate between frame 0 and frame 1.
+         if (XST_FAILURE == XAxiVdma_StartParking(&videoDMAController, frameIndex,  XAXIVDMA_READ)) {
+        	 xil_printf("vdma parking failed\n\r");
+         }
+     }
+     cleanup_platform();
+
+    return 0;
+}
+
+
+
+
