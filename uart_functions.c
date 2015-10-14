@@ -34,6 +34,7 @@ void moveTankRight(){
 }
 
 void moveAlienBlock(){
+  //TODO find left and right most columns based on globals_deadColumns[10]. Move block accordingly
   point_t alienBlockLocation;/*{{{*/
   alienBlockLocation = globals_getAlienBlockPosition();
   if(blockMovingRight){
@@ -69,16 +70,23 @@ void moveAlienBlock(){
  * must find out which alien is represented by those coordinates, then update boolean array. Increase score
 */
 //TODO add draw alien explosion function
-//TODO change global variables for right most column and left most column
 void killAlien(unsigned short x, unsigned short y){
   /*{{{*/
-  
+  int i;
   col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE);
   row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION);
   unsigned int alien = col + (row * 11);
   globals_DeadAliens[alien] = true; //kill the alien
   //last alien in column? If so, adjust column globals
-  for(i = col; i < 
+  for(i = col; i < col + 33; i+=11){
+    if(globals_DeadAliens[i] = true){
+      continue;
+    }
+    else
+      break;
+    globals_deadColumns[col] = DEAD;
+  }
+    
   //TODO draw alien 'splosion
   //redraw alien block (preferably only the alien that died)
   write_alien_block_to_memory();
