@@ -4,6 +4,7 @@
 #include <time.h>
 
 static bool lowered;
+static bool newDeadCol;
 
 void moveTankLeft(){
   unsigned short tankPosition;/*{{{*/
@@ -33,9 +34,29 @@ void moveTankRight(){
   return;/*}}}*/
 }
 
+//TODO test changes to alien block movement
 void moveAlienBlock(){
-  //TODO find left and right most columns based on globals_deadColumns[10]. Move block accordingly
-  point_t alienBlockLocation;/*{{{*/
+/*{{{*/
+  static uint8_t leftMostCol = 0;
+  static uint8_t rightMostCol = 10;
+  int i;
+  //only find new value for edge columns if a column was recently killed
+  if(newDeadCol){
+    //find left most col
+    for(i = 1;i < 11; ++i){
+      if(globals_deadColumns[i-1] == DEAD){
+        leftMostCol = i;
+      }
+    }
+    //find right most col
+    for(i = 9, i >= 0; ++i){
+      if(globals_deadColumns[i+1] == DEAD){
+        rightMostCol = i;
+      }
+    }
+  }
+  newDeadCol = false;
+  point_t alienBlockLocation;
   alienBlockLocation = globals_getAlienBlockPosition();
   if(blockMovingRight){
     alienBlockLocation.x += BLOCK_MOVEMENT_X;
@@ -44,21 +65,25 @@ void moveAlienBlock(){
   }
   //reference block by left side. If all the way right, change direction to left
   //move down if all the way at right of screen and change direction
-  if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 && !lowered && blockMovingRight){
+  //if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 && !lowered && blockMovingRight){
+  if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 - \
+                            (WIDTH_ALIEN + WIDTH_ALIEN_COL_SPACE)*(10-rightMostCol) && !lowered && blockMovingRight){
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x -= BLOCK_MOVEMENT_X;//don't move horizontally
-    lowered = true;
+    lowered = true;//the block did not just move down. Can do so next time
     blockMovingRight = false;
   }
   //move down if all the way at left of screen and change direction
-  else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1 < STOP_DISTANCE  && !lowered && !blockMovingRight){
+  //else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1 < STOP_DISTANCE  && !lowered && !blockMovingRight){
+  else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1+(WIDTH_ALIEN + WIDTH_ALIEN_COL_SPACE)*rightMostCol < \
+          STOP_DISTANCE && !lowered && !blockMovingRight){
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x += BLOCK_MOVEMENT_X;//don't move horizontally
-    lowered = true;
+    lowered = true;//block just moved down. Next move must be to the side
     blockMovingRight = true;
   }
   else{
-    lowered = false;
+    lowered = false;//the block did not just move down. Can do so next time
   }
   globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
   alienBlockState = !alienBlockState;
@@ -85,6 +110,7 @@ void killAlien(unsigned short x, unsigned short y){
     else
       break;
     globals_deadColumns[col] = DEAD;
+    newDeadCol = true;
   }
     
   //TODO draw alien 'splosion
