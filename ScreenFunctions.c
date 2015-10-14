@@ -298,9 +298,15 @@ void write_alien_bullets_to_memory() {
 void write_score_to_memory() {
 
 }
+
+void write_score_word_to_memory() {
+
+}
+
 void write_lives_to_memory() {
 
 }
+
 void write_bottom_line_to_memory() {
 	int row;
 	int col;
@@ -315,7 +321,7 @@ void write_bottom_line_to_memory() {
 
 
 
-
+//find where score and lives change and add a function for changing that
 
 
 
