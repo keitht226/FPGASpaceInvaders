@@ -112,7 +112,8 @@ int main()
      score = 0;
      lives = 3;
      mothershipSpawnCounter = 0;
-     srand((unsigned)time(&seed));
+     right_live_column = 10; //11 columns of aliens, initially the right most is column 10
+     //srand((unsigned)time(&seed));//TODO change seed to be fit timer
      /*          end initialization               */
 
     /************ lab4 setup interrupts and GPIO *************************/
