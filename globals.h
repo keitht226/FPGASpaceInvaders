@@ -102,6 +102,7 @@
 unsigned int score; //updated in killAliens() and killMothership()
 unsigned int lives; //updated in killTank() and when score = 1000
 unsigned short mothershipSpawnCounter;
+bool globals_mothershipState;
 bool globals_deadColumns[10]; //dead columns 
 #define BUNKER_OFFSET 80U
 #define BUNKER_0 BUNKER_OFFSET

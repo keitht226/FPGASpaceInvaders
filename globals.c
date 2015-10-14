@@ -8,6 +8,14 @@ bool globals_DeadAliens[55] = {false}; //initialize all to be alive. True is dea
 bool globals_deadColumns[10] = {ALIVE}; //initialize all columns to be alive
 bool tankBulletOffscreen = true;
 bool alienBlockState = LEGS_IN;
+unsigned int score = 0;
+unsigned int lives = 3;
+unsigned short mothershipSpawnCounter = 0;
+globals_bullets[0].offScreen = true;
+globals_bullets[1].offScreen = true;
+globals_bullets[2].offScreen = true;
+globals_bullets[3].offScreen = true;
+bool mothershipState = DEAD;
 
 const int ALIEN_START = 50;
 const int ROWS_OF_ALIENS = 5;

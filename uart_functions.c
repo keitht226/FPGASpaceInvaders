@@ -320,5 +320,6 @@ void killMothership(){
   //TODO erase mothership
   score += MOTHERSHIP_SCORE;
   mothershipSpawnCounter = 0;
+  globals_mothershipState = DEAD;
   return;/*}}}*/
 }

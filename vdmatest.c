@@ -102,17 +102,8 @@ int main()
 
      /*        initialize variables               */
      globals_setTankPosition(320);
-     globals_bullets[0].offScreen = true;
-     globals_bullets[1].offScreen = true;
-     globals_bullets[2].offScreen = true;
-     globals_bullets[3].offScreen = true;
      init_monitor();
      char key;
-     time_t seed;
-     score = 0;
-     lives = 3;
-     mothershipSpawnCounter = 0;
-     right_live_column = 10; //11 columns of aliens, initially the right most is column 10
      //srand((unsigned)time(&seed));//TODO change seed to be fit timer
      /*          end initialization               */
 
@@ -135,6 +126,7 @@ int main()
     /*********** end setup ***********************************************/
 
      while (1) {
+       /*
     	    key = getchar();
     	    switch(key){
     	      case '4':
@@ -173,8 +165,7 @@ int main()
     	        xil_printf("warning: default case reached in uart_commands. Enter 4,6,8,2,5,3,9, or 7\n\r");
     	        break;
     	    }
-    	 //while (sillyTimer) sillyTimer--;    // Decrement the timer.
-    	 //sillyTimer = MAX_SILLY_TIMER;       // Reset the timer.
+        */
          //frameIndex = (frameIndex + 1) % 2;  // Alternate between frame 0 and frame 1.
          if (XST_FAILURE == XAxiVdma_StartParking(&videoDMAController, frameIndex,  XAXIVDMA_READ)) {
         	 xil_printf("vdma parking failed\n\r");
