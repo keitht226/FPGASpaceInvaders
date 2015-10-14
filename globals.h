@@ -105,6 +105,7 @@ unsigned short mothershipSpawnCounter;
 bool globals_mothershipState;
 bool globals_deadColumns[10]; //dead columns 
 bool globals_tankDeath;
+unsigned short mothershipPosition;
 #define BUNKER_OFFSET 80U
 #define BUNKER_0 BUNKER_OFFSET
 #define BUNKER_1 BUNKER_OFFSET + (BUNKER_OFFSET * 1) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 1);
@@ -112,12 +113,13 @@ bool globals_tankDeath;
 #define BUNKER_3 BUNKER_OFFSET + (BUNKER_OFFSET * 3) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 3);
 #define BUNKER_WIDTH 48
 #define BUNKER_HEIGHT 36
-#define ALIEN_SCORE 100 //score for killing an alien
-#define MOTHERSHIP_SCORE 500 //score for killing mothership
+#define ALIEN_SCORE 10 //score for killing an alien
+#define MOTHERSHIP_SCORE 150 //score for killing mothership
 #define running 1
 #define stopped 0
 #define DEAD 1
 #define ALIVE 0
+#define MOTHERSHIP_MOVEMENT 2
 /****************       end lab4      *************/
 
 bool globals_DeadAliens[55]; //initialize all to be alive. True is dead, false is alive

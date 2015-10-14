@@ -320,7 +320,8 @@ void killMothership(){
   /*{{{*/
   //TODO erase mothership
   score += MOTHERSHIP_SCORE;
-  mothershipSpawnCounter = 0;
+  //assign new random spawn value for mothership
+  mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
   globals_mothershipState = DEAD;
   return;/*}}}*/
 }

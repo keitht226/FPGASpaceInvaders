@@ -9,31 +9,49 @@
 //moves about every half_second
 #define ALIEN_SPEED 50
 //faster than alien speed by considerable amount
-#define MOTHERSHIP_SPEED 5
+#define MOTHERSHIP_SPEED 10
+#define EXPLODE_TIME 200
+#define MOTHERSHIP_MIN 5 //lowest number of seconds until next mothership
+#define MOTHERSHIP_MAX 20//highest number of sec until next mothership
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
 XGpio gpPB;   // This is a handle for the push-button GPIO block.
 static uint16_t Timer;
+static uint16_t mothershipTimer;
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
   //ensure random for mothership and alien bullets
-  srand((unsigned)time(&sectimer));
-  //btn_value = XGpio_DiscreteRead(&gpPB, 1); //get current state of buttons
+  srand((unsigned)time(&timer));
   //move alien block
   if(!(timer%ALIEN_SPEED))
     moveAlienBlock();
   //perform tank animation
-  if(running){
-    timer = 0;
-    while(timer < 200){//explode for two seconds
+  if(running){//running set in uart_functions.c
+    timer = 1;//reset timer
+    while(timer < EXPLODE_TIME){//explode for two seconds
       //TODO'splosion animation
     }
     globals_tankDeath = stopped; 
   }
-  //draw mothership if mothershipSpawnCounter reached and set new spawn counter with rand
   //if mothership is present, move mothership
-  ++timer;
+  if(globals_mothershipState == ALIVE && !(timer % MEOTHERSHIP_SPEED)){
+    mothershipPosition += MOTHERSHIP_MOVEMENT;
+    //TODO draw mothership
+  }
+  //draw mothership if mothershipSpawnCounter reached
+  if(!(timer % mothershipSpawnCounter)){
+    globals_mothershipState = ALIVE;
+    mothershipTimer = 0;//initialize/reset timer
+    //TODO draw mothership
+  }
+  //inc timer and protect against overflow. 
+  if(timer == UINT16_MAX){ 
+    timer = 1;//Reset timer to 1 so as not to mess up mod operations
+  }else{
+    ++timer;
+  }
+  ++mothershipTimer;//mothership needs its own timer. Appears at unpredictable times
 }
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
