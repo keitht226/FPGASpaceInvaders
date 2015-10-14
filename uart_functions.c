@@ -297,18 +297,19 @@ void erodeBunker(unsigned short x, unsigned short y){
 
 //ensure game pauses. Do 'splosion animation. Decrease lives. 
 //    ^ to do this, set global boolean here that will be looked at by FIT. FIT will loop in animation until completed
+//TODO draw stuff. See inside function
 void killTank(){
-
-  int i;/*{{{*/
+/*{{{*/
+  int i;
   --lives;  
-  tank_death = running;
+  globals_tankDeath = running;
   for(i = 0;, i < 4; i++){
     globals_bullets[i].offscreen = true;
   }
   //TODO redraw bullets as black
   tankBulletOffscreen = true;
   //TODO redraw tank bullet
-  while(tank_death == running){
+  while(globals_tankDeath == running){
   }
   //TODO reset tank position to start position
   return;/*}}}*/

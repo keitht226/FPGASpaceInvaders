@@ -13,7 +13,7 @@
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
 XGpio gpPB;   // This is a handle for the push-button GPIO block.
-uint16_t Timer;
+static uint16_t Timer;
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
@@ -21,9 +21,19 @@ void timer_interrupt_handler(){
   srand((unsigned)time(&sectimer));
   //btn_value = XGpio_DiscreteRead(&gpPB, 1); //get current state of buttons
   //move alien block
+  if(!(timer%ALIEN_SPEED))
+    moveAlienBlock();
   //perform tank animation
+  if(running){
+    timer = 0;
+    while(timer < 200){//explode for two seconds
+      //TODO'splosion animation
+    }
+    globals_tankDeath = stopped; 
+  }
   //draw mothership if mothershipSpawnCounter reached and set new spawn counter with rand
   //if mothership is present, move mothership
+  ++timer;
 }
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
