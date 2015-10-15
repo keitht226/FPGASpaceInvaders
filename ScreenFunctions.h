@@ -4,6 +4,7 @@
 #define SCREENFUNCTIONS_H_
 
 #define FRAME_BUFFER_0_ADDR 0xC1000000  // Starting location in DDR where we will store the images that we display.
+#define SCORE_WORD_SIZE 5
 
 void init_monitor();
 void init_screen();

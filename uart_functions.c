@@ -114,9 +114,11 @@ void killAlien(unsigned short x, unsigned short y){
   }
     
   //TODO draw alien 'splosion
+  write_explosion_to_memory(alien);
   //redraw alien block (preferably only the alien that died)
-  write_alien_block_to_memory();
+  //write_alien_dead_to_memory(alien);
   score += ALIEN_SCORE;
+  write_score_to_memory(score);
   return;/*}}}*/
 }
 
@@ -301,13 +303,15 @@ void erodeBunker(unsigned short x, unsigned short y){
 void killTank(){
 /*{{{*/
   int i;
-  --lives;  
+  --lives;
+  write_lives_to_memory();  
   globals_tankDeath = running;
   for(i = 0;, i < 4; i++){
     globals_bullets[i].offscreen = true;
   }
   //TODO redraw bullets as black
   tankBulletOffscreen = true;
+  write_tank_bullet_to_memory();
   //TODO redraw tank bullet
   while(globals_tankDeath == running){
   }
@@ -319,7 +323,10 @@ void killTank(){
 void killMothership(){
   /*{{{*/
   //TODO erase mothership
+  write_mothership_hit_score_to_memory();
+  write_mothership_black_to_memory();
   score += MOTHERSHIP_SCORE;
+  write_score_to_memory(score);
   //assign new random spawn value for mothership
   mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
   globals_mothershipState = DEAD;

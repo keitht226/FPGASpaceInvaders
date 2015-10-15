@@ -55,11 +55,18 @@
 ((b14 << 31) | (b13 << 30) | (b12 << 29) |(b11 << 28) | (b10 << 27) | (b9  << 26 ) | (b8  << 25 ) |						  \
 (b7  << 24 ) | (b6  << 23 ) | (b5  << 22 ) | (b4  << 21 ) | (b3  << 20 ) | (b2  << 19 ) | (b1  << 18 ) | (b0  << 17 ) )
 
-
 #define packword_tank_left(b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
 ((b14 << 14) | (b13 << 13) | (b12 << 12) |(b11 << 11) | (b10 << 10) | (b9  << 9 ) | (b8  << 8 ) |						  \
 (b7  << 7 ) | (b6  << 6 ) | (b5  << 5 ) | (b4  << 4 ) | (b3  << 3 ) | (b2  << 2 ) | (b1  << 1 ) | (b0  << 0 ) )
 
+#define packword_mothersihp_right(b19,b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
+((b19 << 31) | (b18 << 30) | (b17 << 29) |(b16 << 28) | (b15 << 27) | (b14  << 26 ) | (b13  << 25 ) |						  \
+(b12  << 24 ) | (b11  << 23 ) | (b10  << 22 ) | (b9  << 21 ) | (b8  << 20 ) | (b7  << 19 ) | (b6  << 18 ) | (b5  << 17 ) |   \
+(b4 << 16) | (b3 << 15) | (b2 << 14) | (b1 << 13) | (b0 << 12) )
+
+#define packword_mothership_left(b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
+((b14 << 14) | (b13 << 13) | (b12 << 12) |(b11 << 11) | (b10 << 10) | (b9  << 9 ) | (b8  << 8 ) |						  \
+(b7  << 7 ) | (b6  << 6 ) | (b5  << 5 ) | (b4  << 4 ) | (b3  << 3 ) | (b2  << 2 ) | (b1  << 1 ) | (b0  << 0 ) )
 
 #define packwordBunkerDamage(b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
 ((b11 << 31) | (b10 << 30) | (b9  << 29 ) | (b8  << 28 ) |						  \
@@ -87,8 +94,16 @@
 #define LEGS_IN 0
 #define LEGS_OUT 1
 #define TANK_POSITION_Y 400
+#define CHAR_HEIGHT 19
+#define CHAR_WIDTH 15
 
 //macros for proper positioning
+#define SCORE_ROW_OFFSET 10
+#define SCORE_COL_OFFSET 10 
+#define SCORE_NUM_COL_OFFSET 110
+#define LIVES_ROW_OFFSET 10
+#define LIVES_WORD_COL_OFFSET 530
+#define LIVES_COL_OFFSET 550
 #define WIDTH_ALIENS 24
 #define WIDTH_ALIEN_COL_SPACE 8
 #define WIDTH_TANK 30
@@ -172,7 +187,9 @@ point_t globals_getAlienPosition(uint8_t alien);
 
 //all shapes
 // Must define packword for each of the different bit-widths.
-const int saucer_32x14[14];
+const int mothership_left[14];
+const int mothership_right[14];
+const int motherhsip_black[14];
 const int alien_explosion_24x20[20];
  
 const int alien_dead_24x16[16];
@@ -204,6 +221,8 @@ const int alienBulletT0[18];
 const int alienBulletZ0[18];
 const int alienBulletZ1[18];
 const int alienBulletBlack[18];
+const int tank_explosion_1[16];
+const int tank_explosion_2[16];
 
 
 //col & row of pixel maps
@@ -237,6 +256,10 @@ const int ALIEN_BULLET_ROW;
 const int ALIEN_BULLET_COL;
 const int GROUND_OFFSET;
 const int BIT_32;
+const int MAX_SCORE_SIZE;
+const int MOTHERSHIP_ROW_OFFSET;
+const int MOTHERSHIP_ROW;
+const int MOTHERSHIP_COL;
 
 const int WHITE;
 const int YELLOW;

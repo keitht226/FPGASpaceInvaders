@@ -55,7 +55,8 @@ void init_screen() {
 	write_tank_bullet_to_memory();
 	write_alien_bullets_to_memory();
 
-	write_score_to_memory();
+	write_score_word_to_memory();
+	write_lives_word_to_memory();
 	write_lives_to_memory();
 	write_bottom_line_to_memory();
 
@@ -92,7 +93,7 @@ void write_top_row_aliens() {
 		}
 		else{
 			//Write black space
-			write_pixel_array(alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+			//write_pixel_array(alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 		}
 		++current_alien;
 	}
@@ -121,7 +122,7 @@ void write_middle_rows_aliens() {
 		}
 		else{
 			//Write black space
-			write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+			//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 		}
 		++current_alien;
 	}
@@ -149,11 +150,40 @@ void write_bottom_rows_aliens() {
 		}
 		else{
 			//Write black space
-			write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+			//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 		}
 		++current_alien;
 	}
 }
+
+
+
+//Alien Explosion ----------------------------------
+
+void write_explosion_to_memory(int alien_index) {
+	point_t alien_block = globals_getAlienBlockPosition();
+	block_x = alien_block.x;
+	block_y = alien_block.y;
+	int row_offset;
+	int col_offset;
+	row_offset = block_y + (alien_index / 11) * ALIEN_ROW + (alien_index/11) * ALIEN_ROW_SEPARATION;
+	col_offset = block_x + (alien_index % 11) * ALIEN_COL + (alien_index%11) * ALIEN_COLUMN_SEPARATION;
+	write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_explosion_24x20, WHITE);
+	//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+}
+
+void write_alien_dead_to_memory(int alien_index) {
+	point_t alien_block = globals_getAlienBlockPosition();
+	block_x = alien_block.x;
+	block_y = alien_block.y;
+	int row_offset;
+	int col_offset;
+	row_offset = block_y + (alien_index / 11) * ALIEN_ROW + (alien_index/11) * ALIEN_ROW_SEPARATION;
+	col_offset = block_x + (alien_index % 11) * ALIEN_COL + (alien_index%11) * ALIEN_COLUMN_SEPARATION;
+	write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+	//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+}
+
 
 //Tank ---------------------------------------------
 
@@ -164,6 +194,33 @@ void write_tank_to_memory() {
 	write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
 	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
 }
+
+//Mothership ---------------------------------------
+
+void write_mothership_to_memory() {
+	int row_offset = MOTHERSHIP_ROW_OFFSET;
+	int col_offset = (int) mothershipPosition;
+	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_left, RED);
+	write_pixel_array(row_offset, col_offset - BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, RED);
+	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+}
+
+void write_mothership_hit_score_to_memory() {
+	//int row_offset = MOTHERSHIP_ROW_OFFSET;
+	//int col_offset = (int) mothershipPosition;
+	//write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_left, WHITE);
+	//write_pixel_array(row_offset, col_offset - BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, WHITE);
+	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+}
+
+void write_mothership_black_to_memory() {
+	int row_offset = MOTHERSHIP_ROW_OFFSET;
+	int col_offset = (int) mothershipPosition;
+	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, BIT_32, mothership_black, GREEN);
+	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+}
+
+
 
 //Bunkers ------------------------------------------
 void write_bunkers_to_memory() {
@@ -244,7 +301,7 @@ void write_tank_bullet_to_memory() {
 		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBullet_4x18, WHITE);
 	}
 	else {
-		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBulletBlack, WHITE);
+		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBulletBlack, BLACK);
 	}
 }
 
@@ -295,16 +352,56 @@ void write_alien_bullets_to_memory() {
 
 
 //Score, Lives, Bottom Line ---------------------------------------------
-void write_score_to_memory() {
+void write_score_to_memory(int current_score) {
+	int[] score_array = int[MAX_SCORE_SIZE]();
 
+	int j;
+	for(j = 0; j < MAX_SCORE_SIZE; ++j){
+		int digit;
+		digit = current_score % 10;
+		score_array[j] = digit;
+		current_score = current_score / 10;
+	}
+
+	int i;
+	i = MAX_SCORE_SIZE;
+	while(i) {
+		if(score_array[i]) {
+			int offset_multiplier = 0;
+			while(i){
+				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(i), WHITE);
+				--i;
+				++offset_multiplier;
+			}
+		}
+	}
 }
 
 void write_score_word_to_memory() {
-
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterS, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterC, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterO, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterR, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterE, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 6*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, num0, WHITE);
 }
 
 void write_lives_to_memory() {
+	int i;
+	//Write each of the lives left
+	for(i = 0; i < lives; ++i){
+		write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_left, GREEN);
+		write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET - BIT_32 + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_right, GREEN);
+	}
 
+}
+
+void write_lives_word_to_memory() {
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterL, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterI, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterV, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterE, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterS, WHITE);
 }
 
 void write_bottom_line_to_memory() {
@@ -319,9 +416,34 @@ void write_bottom_line_to_memory() {
 	}
 }
 
+const int[] get_int_bitmap(int i) {
+	switch(i) {
+		case 1:
+			return num1;
+		case 2:
+			return num2;
+		case 3:
+			return num3;
+		case 4:
+			return num4;
+		case 5:
+			return num5;
+		case 6:
+			return num6;
+		case 7:
+			return num7;
+		case 8:
+			return num8;
+		case 9:
+			return num9;
+		case 0:
+			return num0;
+		default:
+			return alien_explosion_24x20;
+	}
+}
 
 
-//find where score and lives change and add a function for changing that
 
 
 
