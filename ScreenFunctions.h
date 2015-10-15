@@ -21,7 +21,14 @@ void write_alien_bullets_to_memory();
 void write_score_to_memory();
 void write_lives_to_memory();
 void write_bottom_line_to_memory();
-
+void write_mothership_to_memory();
+void write_mothership_hit_score_to_memory();
+void write_mothership_black_to_memory();
+void write_explosion_to_memory(int alien_index);
+void write_score_word_to_memory();
+void write_lives_word_to_memory();
+int const* get_int_bitmap(int i);
+void write_new_tank_bullet_to_memory();
 
 int alien_block_x;
 int alien_block_y;

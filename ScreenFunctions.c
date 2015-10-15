@@ -157,7 +157,7 @@ void write_bottom_rows_aliens() {
 }
 
 
-
+static unsigned short block_x,block_y;
 //Alien Explosion ----------------------------------
 
 void write_explosion_to_memory(int alien_index) {
@@ -353,7 +353,7 @@ void write_alien_bullets_to_memory() {
 
 //Score, Lives, Bottom Line ---------------------------------------------
 void write_score_to_memory(int current_score) {
-	int[] score_array = int[MAX_SCORE_SIZE]();
+	int score_array[MAX_SCORE_SIZE];
 
 	int j;
 	for(j = 0; j < MAX_SCORE_SIZE; ++j){
@@ -416,7 +416,7 @@ void write_bottom_line_to_memory() {
 	}
 }
 
-const int[] get_int_bitmap(int i) {
+int const* get_int_bitmap(int i) {
 	switch(i) {
 		case 1:
 			return num1;
@@ -473,6 +473,6 @@ void write_pixel_array(int row_offset, int col_offset, int row_array_max, int co
 
 int get_pixel_color(int row, int col){
   int color;
-  color = framPointer0[row * X_MAX + col];
+  color = framePointer0[row * X_MAX + col];
   return color;
 }

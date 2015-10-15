@@ -1,28 +1,12 @@
-#include "xgpio.h"          // Provides access to PB GPIO driver.
-#include <stdio.h>          // xil_printf and so forth.
-#include "platform.h"       // Enables caching and other system stuff.
-#include "mb_interface.h"   // provides the microblaze interrupt enables, etc.
-#include "xintc_l.h"        // Provides handy macros for the interrupt controller.
-#include "uart_functions.h"
-#include "ScreenFunctions.h"
+#include "interrupts.h"
 
-//moves about every half_second
-#define ALIEN_SPEED 50
-//faster than alien speed by considerable amount
-#define MOTHERSHIP_SPEED 10
-#define EXPLODE_TIME 200
-#define MOTHERSHIP_MIN 5 //lowest number of seconds until next mothership
-#define MOTHERSHIP_MAX 20//highest number of sec until next mothership
-
-XGpio gpLED;  // This is a handle for the LED GPIO block.
-XGpio gpPB;   // This is a handle for the push-button GPIO block.
-static uint16_t Timer;
-static uint16_t mothershipTimer;
+static uint16_t timer = 1;
+static uint16_t mothershipTimer = 1;
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
   //ensure random for mothership and alien bullets
-  srand((unsigned)time(&timer));
+  srand(timer);
   //move alien block
   if(!(timer%ALIEN_SPEED))
     moveAlienBlock();
@@ -35,14 +19,14 @@ void timer_interrupt_handler(){
     globals_tankDeath = stopped; 
   }
   //if mothership is present, move mothership
-  if(globals_mothershipState == ALIVE && !(timer % MEOTHERSHIP_SPEED)){
+  if(globals_mothershipState == ALIVE && !(timer % MOTHERSHIP_SPEED)){
     mothershipPosition += MOTHERSHIP_MOVEMENT;
     //TODO draw mothership
   }
   //draw mothership if mothershipSpawnCounter reached
   if(!(timer % mothershipSpawnCounter)){
     globals_mothershipState = ALIVE;
-    mothershipTimer = 0;//initialize/reset timer
+    mothershipTimer = 1;//initialize/reset timer
     //TODO draw mothership
   }
   //inc timer and protect against overflow. 
@@ -51,7 +35,8 @@ void timer_interrupt_handler(){
   }else{
     ++timer;
   }
-  ++mothershipTimer;//mothership needs its own timer. Appears at unpredictable times
+  if(globals_mothershipState == DEAD)
+	  ++mothershipTimer;//mothership needs its own timer. Appears at unpredictable times
 }
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
@@ -72,6 +57,7 @@ void pb_interrupt_handler() {
       moveTankRight();
       break;
     default:
+      break;
   }
   //Down 4 / Up 16 / Hour 8 / Min 1 / Sec 2
   //bit 0 min / 1 sec / 2 down / 3 hour / 4 up

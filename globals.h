@@ -18,9 +18,10 @@
  (b15 << 19) | (b14 << 18) | (b13 << 17) | (b12 << 16) | (b11 << 15) | (b10 << 14) | (b9  << 13 ) | (b8  << 12 ) |						  \
  (b7  << 11 ) | (b6  << 10 ) | (b5  << 9 ) | (b4  << 8 ) | (b3  << 7 ) | (b2  << 6 ) | (b1  << 5 ) | (b0  << 4 ))
 
-#define packWord(b23,b22,b21,b20,b19,b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
+ //(b23 << 31) | (b22 << 30) | (b21 << 29) | (b20 << 28) | (b19 << 27) |
+#define packWord(b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
 (\
- (b23 << 31) | (b22 << 30) | (b21 << 29) | (b20 << 28) | (b19 << 27) | (b18 << 26) | (b17 << 25) | (b16 << 24) |						  \
+ (b18 << 26) | (b17 << 25) | (b16 << 24) |						  \
  (b15 << 23) | (b14 << 22) | (b13 << 21) | (b12 << 20) | (b11 << 19) | (b10 << 18) | (b9  << 17) | (b8  << 16) |						  \
  (b7  << 15) | (b6  << 14) | (b5  << 13) | (b4  << 12) | (b3  << 11) | (b2  << 10) | (b1  << 9) | (b0  << 8))
 
@@ -59,13 +60,13 @@
 ((b14 << 14) | (b13 << 13) | (b12 << 12) |(b11 << 11) | (b10 << 10) | (b9  << 9 ) | (b8  << 8 ) |						  \
 (b7  << 7 ) | (b6  << 6 ) | (b5  << 5 ) | (b4  << 4 ) | (b3  << 3 ) | (b2  << 2 ) | (b1  << 1 ) | (b0  << 0 ) )
 
-#define packword_mothersihp_right(b19,b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
+#define packword_mothership_right(b19,b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
 ((b19 << 31) | (b18 << 30) | (b17 << 29) |(b16 << 28) | (b15 << 27) | (b14  << 26 ) | (b13  << 25 ) |						  \
 (b12  << 24 ) | (b11  << 23 ) | (b10  << 22 ) | (b9  << 21 ) | (b8  << 20 ) | (b7  << 19 ) | (b6  << 18 ) | (b5  << 17 ) |   \
 (b4 << 16) | (b3 << 15) | (b2 << 14) | (b1 << 13) | (b0 << 12) )
 
-#define packword_mothership_left(b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
-((b14 << 14) | (b13 << 13) | (b12 << 12) |(b11 << 11) | (b10 << 10) | (b9  << 9 ) | (b8  << 8 ) |						  \
+#define packword_mothership_left(b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
+((b15 << 15) | (b14 << 14) | (b13 << 13) | (b12 << 12) |(b11 << 11) | (b10 << 10) | (b9  << 9 ) | (b8  << 8 ) |						  \
 (b7  << 7 ) | (b6  << 6 ) | (b5  << 5 ) | (b4  << 4 ) | (b3  << 3 ) | (b2  << 2 ) | (b1  << 1 ) | (b0  << 0 ) )
 
 #define packwordBunkerDamage(b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
@@ -129,9 +130,9 @@ bool globals_tankDeath;
 unsigned short mothershipPosition;
 #define BUNKER_OFFSET 80U
 #define BUNKER_0 BUNKER_OFFSET
-#define BUNKER_1 BUNKER_OFFSET + (BUNKER_OFFSET * 1) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 1);
-#define BUNKER_2 BUNKER_OFFSET + (BUNKER_OFFSET * 2) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 2);
-#define BUNKER_3 BUNKER_OFFSET + (BUNKER_OFFSET * 3) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 3);
+#define BUNKER_1 (BUNKER_OFFSET + (BUNKER_OFFSET * 1) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 1))
+#define BUNKER_2 (BUNKER_OFFSET + (BUNKER_OFFSET * 2) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 2))
+#define BUNKER_3 (BUNKER_OFFSET + (BUNKER_OFFSET * 3) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 3))
 #define BUNKER_WIDTH 48
 #define BUNKER_HEIGHT 36
 #define ALIEN_SCORE 10 //score for killing an alien
@@ -141,6 +142,7 @@ unsigned short mothershipPosition;
 #define DEAD 1
 #define ALIVE 0
 #define MOTHERSHIP_MOVEMENT 2
+
 /****************       end lab4      *************/
 
 bool globals_DeadAliens[55]; //initialize all to be alive. True is dead, false is alive
@@ -223,6 +225,25 @@ const int alienBulletZ1[18];
 const int alienBulletBlack[18];
 const int tank_explosion_1[16];
 const int tank_explosion_2[16];
+const int mothership_black[14];
+const int letterS[15];
+const int letterC[15];
+const int letterO[15];
+const int letterR[15];
+const int letterE[15];
+const int letterL[15];
+const int letterI[15];
+const int letterV[15];
+const int num0[15];
+const int num1[15];
+const int num2[15];
+const int num3[15];
+const int num4[15];
+const int num5[15];
+const int num6[15];
+const int num7[15];
+const int num8[15];
+const int num9[15];
 
 
 //col & row of pixel maps

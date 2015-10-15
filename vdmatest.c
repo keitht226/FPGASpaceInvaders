@@ -14,10 +14,17 @@
 #include "globals.h"
 #include "ScreenFunctions.h"
 #include "uart_functions.h"
+#include "xgpio.h"          // Provides access to PB GPIO driver.
+#include "mb_interface.h"   // provides the microblaze interrupt enables, etc.
+#include "xintc_l.h"        // Provides handy macros for the interrupt controller.
+#include "interrupts.h"
 #define DEBUG false
+
 void print(char *str);
 
 #define MAX_SILLY_TIMER 10000000
+
+XGpio gpPB;   // This is a handle for the push-button GPIO block.
 
 
 int main()
@@ -103,7 +110,10 @@ int main()
      /*        initialize variables               */
      globals_setTankPosition(320);
      init_monitor();
-     char key;
+     globals_bullets[0].offScreen = true;
+     globals_bullets[1].offScreen = true;
+     globals_bullets[2].offScreen = true;
+     globals_bullets[3].offScreen = true;
      //srand((unsigned)time(&seed));//TODO change seed to be fit timer
      /*          end initialization               */
 

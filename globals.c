@@ -11,10 +11,7 @@ bool alienBlockState = LEGS_IN;
 unsigned int score = 0;
 unsigned int lives = 3;
 unsigned short mothershipSpawnCounter = 2000;//mothership appears first time after 20 seconds. All following is random
-globals_bullets[0].offScreen = true;
-globals_bullets[1].offScreen = true;
-globals_bullets[2].offScreen = true;
-globals_bullets[3].offScreen = true;
+
 bool mothershipState = DEAD;
 
 const int ALIEN_START = 50;
@@ -144,7 +141,7 @@ const int motherhsip_right[14] =
   packword_mothership_right(1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
   packword_mothership_right(0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0),
   packword_mothership_right(0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0)
-}
+};
 
 const int motherhsip_black[14] =
 {
@@ -162,7 +159,7 @@ const int motherhsip_black[14] =
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-}
+};
 
 const int alien_explosion_24x20[20]=
 {
@@ -427,7 +424,7 @@ const int tank_explosion_1[16] =
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-}
+};
 
 const int tank_explosion_2[16] =
 {
@@ -447,7 +444,7 @@ const int tank_explosion_2[16] =
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-}
+};
 
 
 
@@ -889,7 +886,7 @@ packWord(1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
 packWord(1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
 packWord(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0),
 packWord(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0),
-packWord(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0
+packWord(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0)
 };
 
 const int letterI[15]=
@@ -1121,5 +1118,3 @@ packWord(0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0),
 packWord(0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0),
 packWord(0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0)
 };
-
-

@@ -6,6 +6,9 @@
 static bool lowered;
 static bool newDeadCol;
 
+#define MOTHERSHIP_MIN 600 //6 seconds between spawns
+#define MOTHERSHIP_MAX 2000 //20 seconds between spawns
+
 void moveTankLeft(){
   unsigned short tankPosition;/*{{{*/
   tankPosition = globals_getTankPosition()-TANK_MOVEMENT;
@@ -49,7 +52,7 @@ void moveAlienBlock(){
       }
     }
     //find right most col
-    for(i = 9, i >= 0; ++i){
+    for(i = 9; i >= 0; ++i){
       if(globals_deadColumns[i+1] == DEAD){
         rightMostCol = i;
       }
@@ -67,7 +70,7 @@ void moveAlienBlock(){
   //move down if all the way at right of screen and change direction
   //if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 && !lowered && blockMovingRight){
   if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 - \
-                            (WIDTH_ALIEN + WIDTH_ALIEN_COL_SPACE)*(10-rightMostCol) && !lowered && blockMovingRight){
+                            (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE)*(10-rightMostCol) && !lowered && blockMovingRight){
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x -= BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//the block did not just move down. Can do so next time
@@ -75,7 +78,7 @@ void moveAlienBlock(){
   }
   //move down if all the way at left of screen and change direction
   //else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1 < STOP_DISTANCE  && !lowered && !blockMovingRight){
-  else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1+(WIDTH_ALIEN + WIDTH_ALIEN_COL_SPACE)*rightMostCol < \
+  else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1+(WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE)*rightMostCol < \
           STOP_DISTANCE && !lowered && !blockMovingRight){
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x += BLOCK_MOVEMENT_X;//don't move horizontally
@@ -98,13 +101,14 @@ void moveAlienBlock(){
 void killAlien(unsigned short x, unsigned short y){
   /*{{{*/
   int i;
+  unsigned int col,row;
   col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE);
   row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION);
   unsigned int alien = col + (row * 11);
   globals_DeadAliens[alien] = true; //kill the alien
   //last alien in column? If so, adjust column globals
   for(i = col; i < col + 33; i+=11){
-    if(globals_DeadAliens[i] = true){
+    if(globals_DeadAliens[i] == true){
       continue;
     }
     else
@@ -218,15 +222,15 @@ void updateBullets(){
   int color;
   for(i = 0; i<4;i++){//iterate through alien bullet array
     //only update position if bullet is onscreen
-    if(globals_bullets[i].offscreen = false){
+    if(globals_bullets[i].offScreen == false){
       globals_bullets[i].position.y += BULLET_MOVEMENT_DISTANCE;
-      color = get_pixel_color(globals_bullets[i].position.x,globals_bullets[i].position.y)
+      color = get_pixel_color(globals_bullets[i].position.x,globals_bullets[i].position.y);
       //if bullet hits something or goes off screen change bullet state in array
       if(  color != BLACK || globals_bullets[i].position.y > Y_MAX){
         globals_bullets[i].offScreen = true;
         //alien bullet can hit bunker or tank
         if(color == GREEN){ //is color offscreen black? Probably not. Extra check for green
-          (globals_bullets[i].position.y > TANK_BUFFER) ? killTank() : killBunker(globals_bullets[i].position.x,globals_bullets[i].position.y);
+          (globals_bullets[i].position.y > TANK_ROW_OFFSET) ? killTank() : erodeBunker(globals_bullets[i].position.x,globals_bullets[i].position.y);
         }
       }
     }
@@ -239,18 +243,14 @@ void updateBullets(){
   //offscreen if hit an object or when off top of screen
   if(tankBullet.y <= 7 || color != BLACK){
     tankBulletOffscreen = true;
-    switch(color){
-      case GREEN:
-        killBunker(tankBullet.x,tankBullet.y);
-        break;
-      case RED:
+    if(color == GREEN){
+        erodeBunker(tankBullet.x,tankBullet.y);
+    }
+    if(color == RED){
         killMothership();
-        break;
-      case WHITE:
+    }
+    if(color == WHITE){
         killAlien(tankBullet.x,tankBullet.y);
-        break;
-      default:
-        break;
     }
   }
 
@@ -266,7 +266,9 @@ void erodeBunker(unsigned short x, unsigned short y){
   unsigned int id;
   unsigned int bunker_x;
   unsigned int region;
+  unsigned int row,col;
   //find out which bunker was hit
+
   if(x > BUNKER_3){
     id = 3;
     bunker_x = BUNKER_3;
@@ -283,8 +285,9 @@ void erodeBunker(unsigned short x, unsigned short y){
     id = 0;
     bunker_x = BUNKER_0;
   }
+
   //find out which region of the bunker was hit. 3 rows, 4 cols
-  col = (x - bunker_x) / WIDTH_BUNKER;
+  col = (x - bunker_x) / BUNKER_WIDTH;
   row = (y - BUNKER_ROW_OFFSET) / BUNKER_HEIGHT;
   region = col + (row * 4);
   globals_bunkers[id].quadrants[region].destruction_level += 1;
@@ -306,8 +309,8 @@ void killTank(){
   --lives;
   write_lives_to_memory();  
   globals_tankDeath = running;
-  for(i = 0;, i < 4; i++){
-    globals_bullets[i].offscreen = true;
+  for(i = 0; i < 4; i++){
+    globals_bullets[i].offScreen = true;
   }
   //TODO redraw bullets as black
   tankBulletOffscreen = true;
