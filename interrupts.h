@@ -13,9 +13,10 @@
 #define ALIEN_SPEED 50
 //faster than alien speed by considerable amount
 #define MOTHERSHIP_SPEED 10
-#define EXPLODE_TIME 200
-#define MOTHERSHIP_MIN 5 //lowest number of seconds until next mothership
-#define MOTHERSHIP_MAX 20//highest number of sec until next mothership
+#define EXPLODE_TIME 200 //explode time for tank
+#define MOTHERSHIP_MIN 50 //lowest number of seconds until next mothership
+#define MOTHERSHIP_MAX 2000//highest number of sec until next mothership
+#define ALIEN_EXPLODE_TIME 25 //quarter second
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
 XGpio gpPB;   // This is a handle for the push-button GPIO block.

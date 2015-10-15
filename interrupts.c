@@ -11,30 +11,52 @@ void timer_interrupt_handler(){
   if(!(timer%ALIEN_SPEED))
     moveAlienBlock();
   //perform tank animation
-  if(running){//running set in uart_functions.c
+  if(globals_tankDeath == running){//running set in uart_functions.c
     timer = 1;//reset timer
-    while(timer < EXPLODE_TIME){//explode for two seconds
-      //TODO'splosion animation
+    if(timer < EXPLODE_TIME){//explode for two seconds
+    	if(!(timer % 2))
+    		write_tank_explosion1();
+    	else
+    		write_tank_explosion2();
     }
     globals_tankDeath = stopped; 
   }
+
   //if mothership is present, move mothership
   if(globals_mothershipState == ALIVE && !(timer % MOTHERSHIP_SPEED)){
     mothershipPosition += MOTHERSHIP_MOVEMENT;
-    //TODO draw mothership
+    if(mothershipPosition > X_MAX){
+    	globals_mothershipState = DEAD;
+    	write_mothership_black_to_memory();
+    }
+    write_mothership_to_memory();
   }
+
   //draw mothership if mothershipSpawnCounter reached
   if(!(timer % mothershipSpawnCounter)){
     globals_mothershipState = ALIVE;
     mothershipTimer = 1;//initialize/reset timer
-    //TODO draw mothership
+    write_mothership_to_memory();
   }
+
+  //stall deleting alien long enough to see explosion
+  if(beginAlienExplosion){
+	  if(alienExplodeCounter <= ALIEN_EXPLODE_TIME){
+		  ++alienExplodeCounter;
+	  }
+	  if(alienExplodeCounter == ALIEN_EXPLODE_TIME){
+		  beginAlienExplosion = false;
+		  alienExplodeCounter = 1;
+	  }
+  }
+
   //inc timer and protect against overflow. 
   if(timer == UINT16_MAX){ 
     timer = 1;//Reset timer to 1 so as not to mess up mod operations
   }else{
     ++timer;
   }
+  //inc mothership timer. Cannot overflow under correct operation
   if(globals_mothershipState == DEAD)
 	  ++mothershipTimer;//mothership needs its own timer. Appears at unpredictable times
 }

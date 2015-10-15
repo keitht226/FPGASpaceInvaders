@@ -21,9 +21,9 @@
  //(b23 << 31) | (b22 << 30) | (b21 << 29) | (b20 << 28) | (b19 << 27) |
 #define packWord(b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
 (\
- (b18 << 26) | (b17 << 25) | (b16 << 24) |						  \
- (b15 << 23) | (b14 << 22) | (b13 << 21) | (b12 << 20) | (b11 << 19) | (b10 << 18) | (b9  << 17) | (b8  << 16) |						  \
- (b7  << 15) | (b6  << 14) | (b5  << 13) | (b4  << 12) | (b3  << 11) | (b2  << 10) | (b1  << 9) | (b0  << 8))
+ (b18 << 31) | (b17 << 30) | (b16 << 29) |						  \
+ (b15 << 28) | (b14 << 27) | (b13 << 26) | (b12 << 25) | (b11 << 24) | (b10 << 23) | (b9  << 22) | (b8  << 21) |						  \
+ (b7  << 20) | (b6  << 19) | (b5  << 18) | (b4  << 17) | (b3  << 16) | (b2  << 15) | (b1  << 14) | (b0  << 13))
 
 #define packwordBunkerLeft(b23,b22,b21,b20,b19,b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
 (\
@@ -95,16 +95,16 @@
 #define LEGS_IN 0
 #define LEGS_OUT 1
 #define TANK_POSITION_Y 400
-#define CHAR_HEIGHT 19
-#define CHAR_WIDTH 15
+#define CHAR_HEIGHT 15
+#define CHAR_WIDTH 19
 
 //macros for proper positioning
 #define SCORE_ROW_OFFSET 10
-#define SCORE_COL_OFFSET 10 
+#define SCORE_COL_OFFSET 20
 #define SCORE_NUM_COL_OFFSET 110
 #define LIVES_ROW_OFFSET 10
-#define LIVES_WORD_COL_OFFSET 530
-#define LIVES_COL_OFFSET 550
+#define LIVES_WORD_COL_OFFSET 340
+#define LIVES_COL_OFFSET 450
 #define WIDTH_ALIENS 24
 #define WIDTH_ALIEN_COL_SPACE 8
 #define WIDTH_TANK 30
@@ -120,14 +120,17 @@
 #define BLOCK_MOVEMENT_X 4
 //
 /*****************      lab4 macros and globals       ********************************************************************/
-#define Y_MIN 30 //considered offscreen if below this for bullets. They will disappear before hitting score or lives
+unsigned int alienExplodeCounter;
 unsigned int score; //updated in killAliens() and killMothership()
 unsigned int lives; //updated in killTank() and when score = 1000
 unsigned short mothershipSpawnCounter;
 bool globals_mothershipState;
 bool globals_deadColumns[10]; //dead columns 
 bool globals_tankDeath;
+bool beginAlienExplosion;
 unsigned short mothershipPosition;
+
+#define Y_MIN 30 //considered offscreen if below this for bullets. They will disappear before hitting score or lives
 #define BUNKER_OFFSET 80U
 #define BUNKER_0 BUNKER_OFFSET
 #define BUNKER_1 (BUNKER_OFFSET + (BUNKER_OFFSET * 1) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 1))
@@ -222,7 +225,7 @@ const int alienBulletT1[18];
 const int alienBulletT0[18];
 const int alienBulletZ0[18];
 const int alienBulletZ1[18];
-const int alienBulletBlack[18];
+const int alienBulletBlack[24];
 const int tank_explosion_1[16];
 const int tank_explosion_2[16];
 const int mothership_black[14];

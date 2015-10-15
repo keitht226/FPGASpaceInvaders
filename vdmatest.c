@@ -109,15 +109,15 @@ int main()
 
      /*        initialize variables               */
      globals_setTankPosition(320);
-     init_monitor();
      globals_bullets[0].offScreen = true;
      globals_bullets[1].offScreen = true;
      globals_bullets[2].offScreen = true;
      globals_bullets[3].offScreen = true;
-     //srand((unsigned)time(&seed));//TODO change seed to be fit timer
+     init_monitor();
      /*          end initialization               */
 
     /************ lab4 setup interrupts and GPIO *************************/
+
     int success;
     //xil_printf("Check\n\r");
     success = XGpio_Initialize(&gpPB, XPAR_PUSH_BUTTONS_5BITS_DEVICE_ID);
@@ -133,49 +133,11 @@ int main()
     		(XPAR_FIT_TIMER_0_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK));
     XIntc_MasterEnable(XPAR_INTC_0_BASEADDR);
     microblaze_enable_interrupts();
+
     /*********** end setup ***********************************************/
 
      while (1) {
-       /*
-    	    key = getchar();
-    	    switch(key){
-    	      case '4':
-    	        //move tank left by constant number of pixels.
-    	        moveTankLeft();
-    	        break;
-    	      case '6':
-    	        //same as above but to the right
-    	        moveTankRight();
-    	        break;
-    	      case '8':
-    	        //update alien position. Switch alien legs every time. Go Right then left. Down at every edge.
-    	        moveAlienBlock();
-    	        break;
-    	      case '2':
-    	        //kill alien. Query for a number between 0 and 54.
-    	        killAlien();
-    	        break;
-    	      case '5':
-    	        //fire tank bullet. set coordinate just above the tank turret
-    	        newTankBullet();
-    	        break;
-    	      case '3':
-    	        //fire random alien missile. Randomly pick from bottom row and randomly pick bullet type
-    	        newAlienBullet();
-    	        break;
-    	      case '9':
-    	        //update all bullets. Disappear and become available once off screen.
-    	        updateBullets();
-    	        break;
-    	      case '7':
-    	        //erode bunker. Query for a number between 0 and 3 and erode the bunker by one step.
-    	        erodeBunker();
-    	        break;
-    	      default:
-    	        xil_printf("warning: default case reached in uart_commands. Enter 4,6,8,2,5,3,9, or 7\n\r");
-    	        break;
-    	    }
-        */
+
          //frameIndex = (frameIndex + 1) % 2;  // Alternate between frame 0 and frame 1.
          if (XST_FAILURE == XAxiVdma_StartParking(&videoDMAController, frameIndex,  XAXIVDMA_READ)) {
         	 xil_printf("vdma parking failed\n\r");

@@ -117,10 +117,11 @@ void killAlien(unsigned short x, unsigned short y){
     newDeadCol = true;
   }
     
-  //TODO draw alien 'splosion
+  beginAlienExplosion = true;
   write_explosion_to_memory(alien);
-  //redraw alien block (preferably only the alien that died)
-  //write_alien_dead_to_memory(alien);
+  //redraw alien block
+  while(beginAlienExplosion);//wait until end of explosion timer before erasing
+  write_alien_dead_to_memory(alien);
   score += ALIEN_SCORE;
   write_score_to_memory(score);
   return;/*}}}*/
@@ -215,7 +216,7 @@ void newAlienBullet(){
  * if RED: mothership. Call killMothership()
  * change offscreen limits to not include score and live otherwise the above colors will exist in other places than just aliens/bunkers/tank
 */
-/*TODO test. Otherwise completed */
+
 void updateBullets(){
   //move all alien bullets down/*{{{*/
   int i;
@@ -260,7 +261,7 @@ void updateBullets(){
 }
 
 /* take in x,y parameters from updateBullets. Find out which part of the bunker was hit and change the destruction level of that portion*/
-//TODO test. Otherwise completed
+
 void erodeBunker(unsigned short x, unsigned short y){
 /*{{{*/
   unsigned int id;
@@ -302,7 +303,7 @@ void erodeBunker(unsigned short x, unsigned short y){
 
 //ensure game pauses. Do 'splosion animation. Decrease lives. 
 //    ^ to do this, set global boolean here that will be looked at by FIT. FIT will loop in animation until completed
-//TODO draw stuff. See inside function
+
 void killTank(){
 /*{{{*/
   int i;
@@ -312,20 +313,17 @@ void killTank(){
   for(i = 0; i < 4; i++){
     globals_bullets[i].offScreen = true;
   }
-  //TODO redraw bullets as black
+  write_alien_bullets_to_memory();
   tankBulletOffscreen = true;
   write_tank_bullet_to_memory();
-  //TODO redraw tank bullet
-  while(globals_tankDeath == running){
-  }
-  //TODO reset tank position to start position
+  while(globals_tankDeath == running);
+  globals_setTankPosition(320);
+  write_tank_to_memory();
   return;/*}}}*/
 }
 
-//TODO add erase mothership function
 void killMothership(){
   /*{{{*/
-  //TODO erase mothership
   write_mothership_hit_score_to_memory();
   write_mothership_black_to_memory();
   score += MOTHERSHIP_SCORE;

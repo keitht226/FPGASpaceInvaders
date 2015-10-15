@@ -137,7 +137,7 @@ void write_bottom_rows_aliens() {
 		col_offset = alien_block_x + (ALIEN_COL * (current_alien % COLUMNS_OF_ALIENS)) + (ALIEN_COLUMN_SEPARATION * (current_alien % COLUMNS_OF_ALIENS));
 		if (current_alien > 43) {
 			//5th Row of aliens
-			row_offset = ALIEN_ROW * 5;
+			row_offset = ALIEN_ROW * 4;
 		}
 		//If alien is dead, skip and don't draw it
 		if (!globals_DeadAliens[current_alien]) {
@@ -191,7 +191,23 @@ void write_tank_to_memory() {
 	int row_offset = TANK_ROW_OFFSET;
 	int col_offset = (int) globals_getTankPosition();
 	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_left, GREEN);
-	write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
+	write_pixel_array(row_offset, col_offset + BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
+	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+}
+
+void write_tank_explosion1() {
+	int row_offset = TANK_ROW_OFFSET;
+	int col_offset = (int) globals_getTankPosition();
+	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_explosion_1, GREEN);
+	//write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
+	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+}
+
+void write_tank_explosion2() {
+	int row_offset = TANK_ROW_OFFSET;
+	int col_offset = (int) globals_getTankPosition();
+	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_explosion_2, GREEN);
+	//write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
 	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
 }
 
@@ -379,11 +395,11 @@ void write_score_to_memory(int current_score) {
 
 void write_score_word_to_memory() {
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterS, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterC, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterO, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterR, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterE, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 6*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, num0, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterC, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterO, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterR, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterE, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH + 2*10, CHAR_HEIGHT, CHAR_WIDTH, num0, WHITE);
 }
 
 void write_lives_to_memory() {
@@ -391,23 +407,23 @@ void write_lives_to_memory() {
 	//Write each of the lives left
 	for(i = 0; i < lives; ++i){
 		write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_left, GREEN);
-		write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET - BIT_32 + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_right, GREEN);
+		write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + BIT_32 + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_right, GREEN);
 	}
 
 }
 
 void write_lives_word_to_memory() {
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterL, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterI, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterV, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterE, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH, CHAR_HEIGHT, CHAR_WIDTH, letterS, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterL, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterI, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterV, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterS, WHITE);
 }
 
 void write_bottom_line_to_memory() {
 	int row;
 	int col;
-	for (row = X_MAX; row < GROUND_BUFFER; ++row) {
+	for (row = GROUND_OFFSET; row < GROUND_OFFSET+3; ++row) {
 		for (col = 0; col < X_MAX; ++col) {
 			//make the pixel at the location appear
 			framePointer0[row * X_MAX + col] = GREEN;

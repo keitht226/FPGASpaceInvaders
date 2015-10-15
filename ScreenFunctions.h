@@ -29,6 +29,9 @@ void write_score_word_to_memory();
 void write_lives_word_to_memory();
 int const* get_int_bitmap(int i);
 void write_new_tank_bullet_to_memory();
+void write_tank_explosion1();
+void write_tank_explosion2();
+void write_alien_dead_to_memory(int alien_index);
 
 int alien_block_x;
 int alien_block_y;
