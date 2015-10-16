@@ -37,13 +37,14 @@ void moveTankRight(){
   return;/*}}}*/
 }
 
-//TODO test changes to alien block movement
+
 void moveAlienBlock(){
 /*{{{*/
   static uint8_t leftMostCol = 0;
   static uint8_t rightMostCol = 10;
   int i;
   //only find new value for edge columns if a column was recently killed
+
   if(newDeadCol){
     //find left most col
     for(i = 1;i < 11; ++i){
@@ -58,6 +59,7 @@ void moveAlienBlock(){
       }
     }
   }
+
   newDeadCol = false;
   point_t alienBlockLocation;
   alienBlockLocation = globals_getAlienBlockPosition();
@@ -78,7 +80,7 @@ void moveAlienBlock(){
   }
   //move down if all the way at left of screen and change direction
   //else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1 < STOP_DISTANCE  && !lowered && !blockMovingRight){
-  else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1+(WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE)*rightMostCol < \
+  else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1+(WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE)*leftMostCol < \
           STOP_DISTANCE && !lowered && !blockMovingRight){
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x += BLOCK_MOVEMENT_X;//don't move horizontally
@@ -97,31 +99,30 @@ void moveAlienBlock(){
 /* call this function from updateBullets. No longer killed by user input. Passed x,y arguments from update bullets
  * must find out which alien is represented by those coordinates, then update boolean array. Increase score
 */
-//TODO add draw alien explosion function
+
 void killAlien(unsigned short x, unsigned short y){
   /*{{{*/
   int i;
   unsigned int col,row;
   col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE);
   row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION);
-  unsigned int alien = col + (row * 11);
-  globals_DeadAliens[alien] = true; //kill the alien
+  globals_alien = col + (row * 11);
+  globals_DeadAliens[globals_alien] = true; //kill the alien
   //last alien in column? If so, adjust column globals
-  for(i = col; i < col + 33; i+=11){
-    if(globals_DeadAliens[i] == true){
-      continue;
+  for(i = col; i < col + 45; i+=11){
+	if(globals_DeadAliens[i] == false){
+		break;
+	}
+    if(globals_DeadAliens[col + 44] == true){
+      newDeadCol = true;
     }
-    else
-      break;
-    globals_deadColumns[col] = DEAD;
     newDeadCol = true;
   }
-    
+  if(newDeadCol){
+	 globals_deadColumns[col] = DEAD;
+  }
   beginAlienExplosion = true;
-  write_explosion_to_memory(alien);
-  //redraw alien block
-  while(beginAlienExplosion);//wait until end of explosion timer before erasing
-  write_alien_dead_to_memory(alien);
+  write_explosion_to_memory(globals_alien);
   score += ALIEN_SCORE;
   write_score_to_memory(score);
   return;/*}}}*/
@@ -219,44 +220,58 @@ void newAlienBullet(){
 
 void updateBullets(){
   //move all alien bullets down/*{{{*/
-  int i;
-  int color;
+  int i,j;
+  int color[6];
+  int tankColor[4];
   for(i = 0; i<4;i++){//iterate through alien bullet array
     //only update position if bullet is onscreen
     if(globals_bullets[i].offScreen == false){
-      globals_bullets[i].position.y += BULLET_MOVEMENT_DISTANCE;
-      color = get_pixel_color(globals_bullets[i].position.x,globals_bullets[i].position.y);
-      //if bullet hits something or goes off screen change bullet state in array
-      if(  color != BLACK || globals_bullets[i].position.y > Y_MAX){
+      globals_bullets[i].position.y += BULLET_MOVEMENT_DISTANCE;//preemptively grab new position
+      if(globals_bullets[i].position.y > Y_MAX){
         globals_bullets[i].offScreen = true;
-        //alien bullet can hit bunker or tank
-        if(color == GREEN){ //is color offscreen black? Probably not. Extra check for green
-          (globals_bullets[i].position.y > TANK_ROW_OFFSET) ? killTank() : erodeBunker(globals_bullets[i].position.x,globals_bullets[i].position.y);
-        }
+      }else{
+		  for(j = 0; j < 6; j++){//check all six pixels of alien bullet for collision
+			  color[j] = get_pixel_color(globals_bullets[i].position.x+j,(globals_bullets[i].position.y + 18));
+			  if(color[j]==GREEN){//hit tank or bunker
+				(globals_bullets[i].position.y > (BUNKER_HALF_ROW + BUNKER_ROW_OFFSET)) ? killTank() : erodeBunker(globals_bullets[i].position.x,globals_bullets[i].position.y);
+				xil_printf("bullet.y: %d\n\r",globals_bullets[i].position.y);
+				globals_bullets[i].offScreen = true;
+				break;
+			  }
+		  }
       }
     }
-  }
-  //move tank bullets up
-  point_t tankBullet = globals_getTankBulletPosition();
-  tankBullet.y -= BULLET_MOVEMENT_DISTANCE;
-  color = get_pixel_color(tankBullet.x, tankBullet.y);
-  globals_setTankBulletPosition(tankBullet);
-  //offscreen if hit an object or when off top of screen
-  if(tankBullet.y <= 7 || color != BLACK){
-    tankBulletOffscreen = true;
-    if(color == GREEN){
-        erodeBunker(tankBullet.x,tankBullet.y);
-    }
-    if(color == RED){
-        killMothership();
-    }
-    if(color == WHITE){
-        killAlien(tankBullet.x,tankBullet.y);
-    }
+    write_alien_bullets_to_memory();
   }
 
-  write_alien_bullets_to_memory();
-  write_tank_bullet_to_memory();
+  //move tank bullets up
+  if(!tankBulletOffscreen){
+	  point_t tankBullet = globals_getTankBulletPosition();
+	  tankBullet.y -= BULLET_MOVEMENT_DISTANCE;
+	  if(tankBullet.y <= 7){//offscreen
+		  tankBulletOffscreen = true;
+	  }else{
+		  for(i = 1; i < 3; ++i){//only pixels 2 and 3 in the tank bullet are white
+			  tankColor[i] = get_pixel_color(tankBullet.x+i, tankBullet.y);
+			  if(tankColor[i] != BLACK){
+				xil_printf("tankbullet color: %d\n\r",tankColor[i]);
+				tankBulletOffscreen = true;
+				if(tankColor[i] == GREEN){
+					erodeBunker(tankBullet.x,tankBullet.y);
+				}
+				if(tankColor[i] == RED){
+					killMothership();
+				}
+				if(tankColor[i] == WHITE){
+					killAlien(tankBullet.x,tankBullet.y);
+				}
+			  }
+		  }
+	  }
+	  globals_setTankBulletPosition(tankBullet);
+	  write_tank_bullet_to_memory();
+  }
+
   return;/*}}}*/
 }
 
@@ -264,6 +279,7 @@ void updateBullets(){
 
 void erodeBunker(unsigned short x, unsigned short y){
 /*{{{*/
+	xil_printf("entered erode bunker\n\r");
   unsigned int id;
   unsigned int bunker_x;
   unsigned int region;
@@ -306,6 +322,7 @@ void erodeBunker(unsigned short x, unsigned short y){
 
 void killTank(){
 /*{{{*/
+	xil_printf("kill tank entered\n\r");
   int i;
   --lives;
   write_lives_to_memory();  
@@ -316,9 +333,7 @@ void killTank(){
   write_alien_bullets_to_memory();
   tankBulletOffscreen = true;
   write_tank_bullet_to_memory();
-  while(globals_tankDeath == running);
-  globals_setTankPosition(320);
-  write_tank_to_memory();
+
   return;/*}}}*/
 }
 

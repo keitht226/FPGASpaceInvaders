@@ -97,6 +97,8 @@
 #define TANK_POSITION_Y 400
 #define CHAR_HEIGHT 15
 #define CHAR_WIDTH 19
+#define STARTING_LIVES 3
+
 
 //macros for proper positioning
 #define SCORE_ROW_OFFSET 10
@@ -128,6 +130,7 @@ bool globals_mothershipState;
 bool globals_deadColumns[10]; //dead columns 
 bool globals_tankDeath;
 bool beginAlienExplosion;
+unsigned int globals_alien;
 unsigned short mothershipPosition;
 
 #define Y_MIN 30 //considered offscreen if below this for bullets. They will disappear before hitting score or lives
@@ -285,12 +288,15 @@ const int MOTHERSHIP_ROW_OFFSET;
 const int MOTHERSHIP_ROW;
 const int MOTHERSHIP_COL;
 
+
 const int WHITE;
 const int YELLOW;
 const int RED;
 const int GREEN;
 const int BLUE;
 const int BLACK;
+const int PURPLE;
+const int PINK;
 
 
 #endif /* GLOBALS_H_ */

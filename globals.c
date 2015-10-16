@@ -57,6 +57,8 @@ const int RED = 16711680;
 const int GREEN = 65280;
 const int BLUE = 255;
 const int BLACK = 0;
+const int PURPLE = 10905297;
+const int PINK = 16711935;
 
 
 void globals_setTankPosition(unsigned short val){

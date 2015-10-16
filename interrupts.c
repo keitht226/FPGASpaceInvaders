@@ -2,64 +2,94 @@
 
 static uint16_t timer = 1;
 static uint16_t mothershipTimer = 1;
+static bool first = true;
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
-  //ensure random for mothership and alien bullets
-  srand(timer);
-  //move alien block
-  if(!(timer%ALIEN_SPEED))
-    moveAlienBlock();
-  //perform tank animation
-  if(globals_tankDeath == running){//running set in uart_functions.c
-    timer = 1;//reset timer
-    if(timer < EXPLODE_TIME){//explode for two seconds
-    	if(!(timer % 2))
-    		write_tank_explosion1();
-    	else
-    		write_tank_explosion2();
-    }
-    globals_tankDeath = stopped; 
-  }
+	if(globals_tankDeath == running){
+		if(first){
+			timer = 1;
+			first = false;
+		}
+	//perform tank animation-----------------------------------------------------------------------
+		if(timer < EXPLODE_TIME){//explode for two seconds
+			if(!(timer % 2))
+				write_tank_explosion1();
+			else
+				write_tank_explosion2();
+		}
+		else{
+			first = true;
+			timer = 1;
+			globals_tankDeath = stopped;
+			globals_setTankPosition(320);
+			write_tank_to_memory();
+		}
+	}
+	else{
+	  //ensure random for mothership and alien bullets
+	  srand(timer);
 
-  //if mothership is present, move mothership
-  if(globals_mothershipState == ALIVE && !(timer % MOTHERSHIP_SPEED)){
-    mothershipPosition += MOTHERSHIP_MOVEMENT;
-    if(mothershipPosition > X_MAX){
-    	globals_mothershipState = DEAD;
-    	write_mothership_black_to_memory();
-    }
-    write_mothership_to_memory();
-  }
+	//move alien block----------------------------------------------------------------------------
+	  if(!(timer%ALIEN_SPEED))
+		moveAlienBlock();
 
-  //draw mothership if mothershipSpawnCounter reached
-  if(!(timer % mothershipSpawnCounter)){
-    globals_mothershipState = ALIVE;
-    mothershipTimer = 1;//initialize/reset timer
-    write_mothership_to_memory();
-  }
 
-  //stall deleting alien long enough to see explosion
-  if(beginAlienExplosion){
-	  if(alienExplodeCounter <= ALIEN_EXPLODE_TIME){
-		  ++alienExplodeCounter;
+	//if mothership is present, move mothership-----------------------------------------------------
+	  if(globals_mothershipState == ALIVE && !(timer % MOTHERSHIP_SPEED)){
+		mothershipPosition += MOTHERSHIP_MOVEMENT;
+		if(mothershipPosition > X_MAX){
+			globals_mothershipState = DEAD;
+			write_mothership_black_to_memory();
+		}
+		write_mothership_to_memory();
 	  }
-	  if(alienExplodeCounter == ALIEN_EXPLODE_TIME){
-		  beginAlienExplosion = false;
-		  alienExplodeCounter = 1;
-	  }
-  }
 
-  //inc timer and protect against overflow. 
+
+	//draw mothership if mothershipSpawnCounter reached---------------------------------------------
+	  if(!(timer % mothershipSpawnCounter)){
+		globals_mothershipState = ALIVE;
+		mothershipTimer = 1;//initialize/reset timer
+		write_mothership_to_memory();
+	  }
+
+	//stall deleting alien long enough to see explosion---------------------------------------------
+	  if(beginAlienExplosion){
+		  if(alienExplodeCounter < ALIEN_EXPLODE_TIME){
+			  ++alienExplodeCounter;
+		  }
+		  if(alienExplodeCounter == ALIEN_EXPLODE_TIME){
+			  write_alien_dead_to_memory(globals_alien);
+			  alienExplodeCounter = 1;
+		  }
+	  }
+
+
+	//update bullets--------------------------------------------------------------------------------
+	  if(!(timer % BULLET_SPEED)){
+		  updateBullets();
+	  }
+
+
+	//create new alien bullet-----------------------------------------------------------------------
+	  if(!(timer % (rand()%(200+1-50)+50))){//new alien bullet from 2-5 seconds
+		  newAlienBullet();
+	  }
+
+	//inc mothership timer. Cannot overflow under correct operation---------------------------------
+	  if(globals_mothershipState == DEAD)
+		  ++mothershipTimer;//mothership needs its own timer. Appears at unpredictable times
+
+	}
+
+//inc timers-------------------------------------------------------------------------------------
   if(timer == UINT16_MAX){ 
     timer = 1;//Reset timer to 1 so as not to mess up mod operations
   }else{
     ++timer;
   }
-  //inc mothership timer. Cannot overflow under correct operation
-  if(globals_mothershipState == DEAD)
-	  ++mothershipTimer;//mothership needs its own timer. Appears at unpredictable times
 }
+
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
 // move tank. Creat new tank bullet

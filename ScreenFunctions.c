@@ -217,7 +217,7 @@ void write_mothership_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
 	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_left, RED);
-	write_pixel_array(row_offset, col_offset - BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, RED);
+	//write_pixel_array(row_offset, col_offset + BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, RED);
 	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
 }
 
@@ -314,7 +314,7 @@ void write_bunkers_to_memory() {
 void write_tank_bullet_to_memory() {
 	point_t position = globals_getTankBulletPosition();
 	if(!tankBulletOffscreen) {
-		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBullet_4x18, WHITE);
+		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBullet_4x18, RED);
 	}
 	else {
 		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBulletBlack, BLACK);
@@ -324,7 +324,7 @@ void write_tank_bullet_to_memory() {
 //Bullets -------------------------------------------------------------
 void write_new_tank_bullet_to_memory() {
 	point_t position = globals_getTankBulletPosition();
-	write_pixel_array(position.y, position.x, TANK_BULLET_NEW_ROW, TANK_BULLET_COL, tankBulletNew, WHITE);
+	write_pixel_array(position.y, position.x, TANK_BULLET_NEW_ROW, TANK_BULLET_COL, tankBulletNew, RED);
 }
 
 void write_alien_bullets_to_memory() {
@@ -342,23 +342,23 @@ void write_alien_bullets_to_memory() {
 		if(!globals_bullets[i].offScreen){
 			switch(i){
 			case 0:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletT0, WHITE);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletT0, RED);
 				break;
 			case 1:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletT1, WHITE);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletT1, RED);
 				break;
 			case 2:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ0, WHITE);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ0, RED);
 				break;
 			case 3:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ1, WHITE);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ1, RED);
 				break;
 			default:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ1, WHITE);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ1, RED);
 			}
 		}
 		else {
-			write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletBlack, WHITE);
+			write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletBlack, BLACK);
 		}
 	}
 }
@@ -370,7 +370,7 @@ void write_alien_bullets_to_memory() {
 //Score, Lives, Bottom Line ---------------------------------------------
 void write_score_to_memory(int current_score) {
 	int score_array[MAX_SCORE_SIZE];
-
+	xil_printf("score: %d\n\r", current_score);
 	int j;
 	for(j = 0; j < MAX_SCORE_SIZE; ++j){
 		int digit;
@@ -379,45 +379,62 @@ void write_score_to_memory(int current_score) {
 		current_score = current_score / 10;
 	}
 
+	/*int k;
+	for(k = 0; k < MAX_SCORE_SIZE; ++k){
+		xil_printf("digits: %d\n\r", score_array[k]);
+	}*/
+
 	int i;
-	i = MAX_SCORE_SIZE;
+	i = MAX_SCORE_SIZE-1;
 	while(i) {
 		if(score_array[i]) {
 			int offset_multiplier = 0;
 			while(i){
-				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(i), WHITE);
+				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
 				--i;
 				++offset_multiplier;
 			}
+			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
 		}
+		if(i == 0){
+			break;
+		}
+		--i;
 	}
 }
 
 void write_score_word_to_memory() {
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterS, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterC, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterO, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterR, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterE, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH + 2*10, CHAR_HEIGHT, CHAR_WIDTH, num0, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterS, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterC, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterO, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 10 +6*CHAR_WIDTH + 2*10, CHAR_HEIGHT, CHAR_WIDTH, num0, YELLOW);
 }
 
 void write_lives_to_memory() {
 	int i;
 	//Write each of the lives left
-	for(i = 0; i < lives; ++i){
-		write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_left, GREEN);
-		write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + BIT_32 + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_right, GREEN);
+	for(i = 0; i < STARTING_LIVES; ++i){
+		if(i < lives){
+			write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_left, BLUE);
+			write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + BIT_32 + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_right, BLUE);
+		}
+		else{
+			write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_left, BLACK);
+			write_pixel_array(LIVES_ROW_OFFSET, LIVES_COL_OFFSET + BIT_32 + (i * BIT_32 * 2), TANK_ROW, TANK_COL, tank_right, BLACK);
+		}
 	}
+
 
 }
 
 void write_lives_word_to_memory() {
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterL, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterI, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterV, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, WHITE);
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterS, WHITE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterL, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterI, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterV, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterS, PURPLE);
 }
 
 void write_bottom_line_to_memory() {
@@ -426,7 +443,7 @@ void write_bottom_line_to_memory() {
 	for (row = GROUND_OFFSET; row < GROUND_OFFSET+3; ++row) {
 		for (col = 0; col < X_MAX; ++col) {
 			//make the pixel at the location appear
-			framePointer0[row * X_MAX + col] = GREEN;
+			framePointer0[row * X_MAX + col] = RED;
 			//framePointer1[row * X_MAX + col] = GREEN;
 		}
 	}
@@ -487,7 +504,7 @@ void write_pixel_array(int row_offset, int col_offset, int row_array_max, int co
 	}
 }
 
-int get_pixel_color(int row, int col){
+int get_pixel_color(int col, int row){
   int color;
   color = framePointer0[row * X_MAX + col];
   return color;
