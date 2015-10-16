@@ -4,7 +4,6 @@
 #include <time.h>
 
 static bool lowered;
-static uint8_t leftMostCol = 0;
 static uint8_t rightMostCol = 10;
 
 #define MOTHERSHIP_MIN 600 //6 seconds between spawns
@@ -87,9 +86,10 @@ void killAlien(unsigned short x, unsigned short y){
   static bool newDeadCol;
   int i;
   unsigned int col,row;
-  col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE);
-  row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION);
-  globals_alien = col + (row * 11)+offset;
+  col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE); //according to NEW arrangement
+  xil_printf("killAlien col: %d\n\r",col);
+  row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION); //regardless of arrangement
+  globals_alien = col + (row * 11)+offset; //use offset to change to ORIGINAL
   xil_printf("killed alien: %d\n\r",globals_alien);
   globals_DeadAliens[globals_alien] = true; //kill the alien
   //last alien in column? If so, adjust column globals
@@ -101,7 +101,8 @@ void killAlien(unsigned short x, unsigned short y){
    * 44
    */
   newDeadCol = true;
-  for(i = col; i < col + (numberOfCol*4+1); i+=numberOfCol){
+  //see if col is dead according to ORIGINAL arrangement
+  for(i = col+offset; i <= col + (11*4+1); i+=11){
 	//if any are alive, stop checking
 	if(globals_DeadAliens[i] == false){
 		newDeadCol = false;
@@ -109,14 +110,13 @@ void killAlien(unsigned short x, unsigned short y){
 	}
   }
   if(newDeadCol){
-	  globals_deadColumns[col] = DEAD;
-	  if(globals_deadColumns[leftMostCol] == DEAD){
-	    leftMostCol++;
+	  globals_deadColumns[col+offset] = DEAD; //set col to dead according to ORIGINAL arrangement
+	  if(globals_deadColumns[offset] == DEAD){
 	    numberOfCol--;
 	    rightMostCol--;
 	    offset++;
 	    point_t alienBlockLocation= globals_getAlienBlockPosition();
-	    alienBlockLocation.x = globals_getAlienPosition(leftMostCol).x;
+	    alienBlockLocation.x = globals_getAlienPosition(offset+1).x;
 	    globals_setAlienBlockPosition(alienBlockLocation);
 	  }
 	  if(globals_deadColumns[rightMostCol] == DEAD){
@@ -250,6 +250,7 @@ void updateBullets(){
   if(!tankBulletOffscreen){
 	  point_t tankBullet = globals_getTankBulletPosition();
 	  tankBullet.y -= BULLET_MOVEMENT_DISTANCE;
+	  globals_setTankBulletPosition(tankBullet);
 	  if(tankBullet.y <= TOP_OF_SCREEN){//offscreen
 		  tankBulletOffscreen = true;
 	  }else{
@@ -270,7 +271,7 @@ void updateBullets(){
 			  }
 		  }
 	  }
-	  globals_setTankBulletPosition(tankBullet);
+
 	  write_tank_bullet_to_memory();
   }
 
