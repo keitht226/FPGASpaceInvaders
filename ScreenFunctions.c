@@ -89,9 +89,9 @@ void write_top_row_aliens() {
 			int row_offset = p.y;
 			int col_offset = p.x;
 			if (alienBlockState) { //subtracted 8 because the top row aliens have extra black pixels on top
-				write_pixel_array(row_offset, col_offset, ALIEN_TOP_ROW, ALIEN_COL, alien_top_out, WHITE);
+				write_pixel_array(row_offset - TOP_ROW_ALIENS_EXTRA_PIXELS, col_offset, ALIEN_TOP_ROW, ALIEN_COL, alien_top_out, WHITE);
 			} else {
-				write_pixel_array(row_offset, col_offset, ALIEN_TOP_ROW, ALIEN_COL, alien_top_in, WHITE);
+				write_pixel_array(row_offset - TOP_ROW_ALIENS_EXTRA_PIXELS, col_offset, ALIEN_TOP_ROW, ALIEN_COL, alien_top_in, WHITE);
 			}
 		}
 		else{
