@@ -103,7 +103,7 @@ point_t globals_getAlienBulletPosition(uint8_t index){
 point_t globals_getAlienPosition(uint8_t alien){
   point_t alienPosition;
   int col = alien % numberOfCol;
-  int row = alien / 11;
+  int row = alien / numberOfCol;
   int y = globals_getAlienBlockPosition().y + (row * (ALIEN_HEIGHT+ALIEN_ROW_SEPARATION));
   int x = globals_getAlienBlockPosition().x + (col * (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE));
 
