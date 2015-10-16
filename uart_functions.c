@@ -307,12 +307,11 @@ void erodeBunker(unsigned short x, unsigned short y){
  // row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION);
   //globals_alien = col + (row * 11);
   col = (x - bunker_x ) / (BUNKER_WIDTH / 4);
-  xil_printf("col: %d\n\r",col);
   row = (y - BUNKER_ROW_OFFSET) / (BUNKER_HEIGHT / 3);
   region = col + (row << 2); //row * 4
   globals_bunkers[id].quadrants[region].destruction_level += 1;
   //xil_printf("Bunker id: %d   destruction_level: %d\n\r",id,globals_bunkers[id].quadrants[region].destruction_level);
-  write_an_erosion_to_memory(id, region);
+  write_an_erosion_to_memory(id, region, row, col);
   return;/*}}}*/
 }
 

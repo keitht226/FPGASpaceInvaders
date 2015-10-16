@@ -130,7 +130,7 @@ packword_mothership_left(0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0),
 packword_mothership_left(0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0)
 };
 
-const int motherhsip_right[14] =
+const int mothership_right[14] =
 {
   packword_mothership_right(1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword_mothership_right(1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
@@ -148,7 +148,7 @@ const int motherhsip_right[14] =
   packword_mothership_right(0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0)
 };
 
-const int motherhsip_black[14] =
+const int mothership_black[14] =
 {
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
@@ -166,7 +166,7 @@ const int motherhsip_black[14] =
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 };
 
-const int motherhsip_score[14] =
+const int mothership_score[14] =
 {
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
   packword32(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),

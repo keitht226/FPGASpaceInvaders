@@ -232,7 +232,7 @@ void write_mothership_to_memory() {
 void write_mothership_hit_score_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
-	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, motherhsip_score, WHITE);
+	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_score, WHITE);
 	//write_pixel_array(row_offset, col_offset - BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, WHITE);
 	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
 }

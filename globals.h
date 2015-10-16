@@ -200,7 +200,7 @@ point_t globals_getAlienPosition(uint8_t alien);
 // Must define packword for each of the different bit-widths.
 const int mothership_left[14];
 const int mothership_right[14];
-const int motherhsip_black[14];
+const int mothership_black[14];
 const int alien_explosion_24x20[20];
  
 const int alien_dead_24x16[16];
@@ -234,7 +234,8 @@ const int alienBulletZ1[18];
 const int alienBulletBlack[24];
 const int tank_explosion_1[16];
 const int tank_explosion_2[16];
-const int mothership_black[14];
+const int tank_black[16];
+const int mothership_score[14];
 const int letterS[15];
 const int letterC[15];
 const int letterO[15];
