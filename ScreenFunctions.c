@@ -81,7 +81,7 @@ void write_top_row_aliens() {
 	int col_offset = 0;
 	while (current_alien < COLUMNS_OF_ALIENS) {
 		//set column offset
-		col_offset = alien_block_x + (ALIEN_COL * (current_alien % COLUMNS_OF_ALIENS)) + (ALIEN_COLUMN_SEPARATION * (current_alien % COLUMNS_OF_ALIENS));
+		col_offset = alien_block_x + (ALIEN_COL * (current_alien % numberOfCol)) + (ALIEN_COLUMN_SEPARATION * (current_alien % numberOfCol));
 		//If alien is dead, skip and don't draw it
 		if (!globals_DeadAliens[current_alien]) {
 			//check in or out state
@@ -105,7 +105,7 @@ void write_middle_rows_aliens() {
 	//current_alien is now 11
 	while (current_alien < 33) {
 		//set column offset
-		col_offset = alien_block_x + (ALIEN_COL * (current_alien % COLUMNS_OF_ALIENS) + (ALIEN_COLUMN_SEPARATION * (current_alien % COLUMNS_OF_ALIENS)));
+		col_offset = alien_block_x + (ALIEN_COL * (current_alien % numberOfCol) + (ALIEN_COLUMN_SEPARATION * (current_alien % numberOfCol)));
 		if (current_alien > 21) {
 			//3rd row of aliens
 			row_offset = ALIEN_ROW * 2;
@@ -134,7 +134,7 @@ void write_bottom_rows_aliens() {
 	//current_alien is now 33
 	while (current_alien < 55) {
 		//set column offset
-		col_offset = alien_block_x + (ALIEN_COL * (current_alien % COLUMNS_OF_ALIENS)) + (ALIEN_COLUMN_SEPARATION * (current_alien % COLUMNS_OF_ALIENS));
+		col_offset = alien_block_x + (ALIEN_COL * (current_alien % numberOfCol)) + (ALIEN_COLUMN_SEPARATION * (current_alien % numberOfCol));
 		if (current_alien > 43) {
 			//5th Row of aliens
 			row_offset = ALIEN_ROW * 4;
@@ -166,8 +166,8 @@ void write_explosion_to_memory(int alien_index) {
 	block_y = alien_block.y;
 	int row_offset;
 	int col_offset;
-	row_offset = block_y + (alien_index / 11) * ALIEN_ROW +(alien_index/11);// ALIEN_ROW_SEPARATION * (alien_index/11);
-	col_offset = block_x + (alien_index % 11) * ALIEN_COL + (alien_index%11) * ALIEN_COLUMN_SEPARATION;
+	row_offset = block_y + (alien_index / numberOfCol) * ALIEN_ROW +(alien_index/numberOfCol);// ALIEN_ROW_SEPARATION * (alien_index/numberOfCol);
+	col_offset = block_x + (alien_index % numberOfCol) * ALIEN_COL + (alien_index%numberOfCol) * ALIEN_COLUMN_SEPARATION;
 	write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_explosion_24x20, WHITE);
 	//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 }
@@ -178,8 +178,8 @@ void write_alien_dead_to_memory(int alien_index) {
 	block_y = alien_block.y;
 	int row_offset;
 	int col_offset;
-	row_offset = block_y + (alien_index / 11) * ALIEN_ROW + (alien_index/11);// * ALIEN_ROW_SEPARATION;
-	col_offset = block_x + (alien_index % 11) * ALIEN_COL + (alien_index%11) * ALIEN_COLUMN_SEPARATION;
+	row_offset = block_y + (alien_index / numberOfCol) * ALIEN_ROW + (alien_index/numberOfCol);// * ALIEN_ROW_SEPARATION;
+	col_offset = block_x + (alien_index % numberOfCol) * ALIEN_COL + (alien_index%numberOfCol) * ALIEN_COLUMN_SEPARATION;
 	write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 	//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 }
@@ -266,7 +266,7 @@ void write_bunkers_to_memory() {
 									//x  x 9&10 don't need to be touched
 }
 
-void write_an_erosion_to_memory(int row, int col){
+void write_an_erosion_to_memory(int row, int col, int destruction_level){
 	//xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", bunker, quadrant, (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level);
 
 	//Row
@@ -275,7 +275,7 @@ void write_an_erosion_to_memory(int row, int col){
 	//int bunker_col_offset = BUNKER_COL_OFFSET + (BUNKER_COL_OFFSET * bunker) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * bunker);
 	//int erosion_col_offset = bunker_col_offset + (EROSION_ROWCOL * quadrant) % EROSION_QUAD_ROWS;
 	//If not zero draw the erosion over the bunker, 0 = no damage, 3 = gone
-	switch((int)globals_bunkers[bunker].quadrants[quadrant].destruction_level){
+	switch(destruction_level){
 		case 1:
 		{
 			 //xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);

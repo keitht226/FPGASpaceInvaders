@@ -32,7 +32,7 @@ void write_new_tank_bullet_to_memory();
 void write_tank_explosion1();
 void write_tank_explosion2();
 void write_alien_dead_to_memory(int alien_index);
-void write_an_erosion_to_memory(int bunker, int quadrant);
+void write_an_erosion_to_memory(int bunker, int quadrant, int destruciton_level);
 
 int alien_block_x;
 int alien_block_y;
