@@ -598,8 +598,8 @@ packwordBunkerDamage(0,0,0,0,0,0,0,0,1,1,0,0)
 
 const int bunkerDamage1_12x12[12]=
 {
-packwordBunkerDamage(0,0,0,1,1,1,0,0,1,0,0,0),
-packwordBunkerDamage(0,0,1,1,1,1,0,0,1,1,0,0),
+packwordBunkerDamage(1,1,1,1,1,1,0,0,0,0,0,0),
+packwordBunkerDamage(1,1,1,1,1,1,0,0,1,1,1,0),
 packwordBunkerDamage(0,1,0,0,1,1,0,0,0,0,1,0),
 packwordBunkerDamage(1,1,0,0,1,1,0,0,0,0,1,1),
 packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,1,1),
@@ -614,9 +614,9 @@ packwordBunkerDamage(0,0,1,1,1,1,0,0,1,1,0,0)
 
 const int bunkerDamage2_12x12[12]=
 {
-packwordBunkerDamage(0,0,0,1,1,1,1,1,1,0,0,0),
-packwordBunkerDamage(0,0,1,1,1,1,1,1,1,1,0,0),
-packwordBunkerDamage(0,1,0,0,1,1,1,1,0,0,1,0),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,1,1,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,1,1,1,1),
+packwordBunkerDamage(1,1,0,0,1,1,1,1,0,0,1,0),
 packwordBunkerDamage(1,1,0,0,1,1,1,1,0,0,1,1),
 packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,1,1),
 packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,1,1),
