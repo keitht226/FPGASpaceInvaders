@@ -55,7 +55,6 @@ void moveAlienBlock(){
   //move down if all the way at right of screen and change direction
   //if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 && !lowered && blockMovingRight){
   if(right_edge > X_MAX - STOP_DISTANCE - 1 && !lowered && blockMovingRight){
-	xil_printf("right_edge: %d\n\r",right_edge);
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x -= BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//the block did not just move down. Can do so next time
@@ -63,7 +62,8 @@ void moveAlienBlock(){
   }
   //move down if all the way at left of screen and change direction
   //else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1 < STOP_DISTANCE  && !lowered && !blockMovingRight){
-  else if(left_edge + 1  < STOP_DISTANCE && !lowered && !blockMovingRight){
+  else if(left_edge < STOP_DISTANCE && !lowered && !blockMovingRight){
+	xil_printf("left edge: %d\n\r",left_edge);
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x += BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//block just moved down. Next move must be to the side
@@ -301,12 +301,15 @@ void erodeBunker(unsigned short x, unsigned short y){
   }
 
   //find out which region of the bunker was hit. 3 rows, 4 cols
-  col = (x - bunker_x) % 4;
-  row = (y - BUNKER_ROW_OFFSET) / BUNKER_HEIGHT;
+ // col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE);
+ // row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION);
+  //globals_alien = col + (row * 11);
+  col = (x - bunker_x) / (BUNKER_WIDTH);
+  row = (y - BUNKER_ROW_OFFSET) / (BUNKER_HEIGHT);
   region = col + (row << 2); //row * 4
   globals_bunkers[id].quadrants[region].destruction_level += 1;
   //xil_printf("Bunker id: %d   destruction_level: %d\n\r",id,globals_bunkers[id].quadrants[region].destruction_level);
-  write_bunkers_to_memory();
+  write_an_erosion_to_memory(id, region);
   return;/*}}}*/
 }
 
