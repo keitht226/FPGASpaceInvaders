@@ -42,7 +42,7 @@ const int EROSION_QUAD_COLS = 4;
 const int MIN_EROSOIN = 0;
 const int MAX_EROSION = 4;
 const int TANK_BULLET_ROW = 18;
-const int TANK_BULLET_COL = 4;
+const int TANK_BULLET_COL = 3;
 const int TANK_BULLET_NEW_ROW = 12;
 const int ALIEN_BULLET_ROW = 18;
 const int ALIEN_BULLET_COL = 6;
@@ -626,6 +626,70 @@ packwordBunkerDamage(0,0,1,1,1,1,1,1,0,0,1,1),
 packwordBunkerDamage(0,0,1,1,1,1,1,1,0,0,1,1),
 packwordBunkerDamage(1,1,1,1,1,1,1,1,1,1,1,1),
 packwordBunkerDamage(1,1,1,1,1,1,1,1,1,1,1,1)
+};
+
+const int bunkerDamage2_left_corner[12]=
+{
+packwordBunkerDamage(0,0,0,0,0,0,1,1,1,1,1,1),
+packwordBunkerDamage(0,0,0,0,0,0,1,1,1,1,1,1),
+packwordBunkerDamage(0,0,0,0,1,1,1,1,0,0,1,0),
+packwordBunkerDamage(0,0,0,0,1,1,1,1,0,0,1,1),
+packwordBunkerDamage(0,0,1,1,0,0,1,1,1,1,1,1),
+packwordBunkerDamage(0,0,1,1,0,0,1,1,1,1,1,1),
+packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,0,0),
+packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,0,0),
+packwordBunkerDamage(0,0,1,1,1,1,1,1,0,0,1,1),
+packwordBunkerDamage(0,0,1,1,1,1,1,1,0,0,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,1,1,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,1,1,1,1)
+};
+
+const int bunkerDamage2_right_corner[12]=
+{
+packwordBunkerDamage(1,1,1,1,1,1,0,0,0,0,0,0),
+packwordBunkerDamage(1,1,1,1,1,1,0,0,0,0,0,0),
+packwordBunkerDamage(1,1,0,0,1,1,1,1,0,0,0,0),
+packwordBunkerDamage(1,1,0,0,1,1,1,1,0,0,0,0),
+packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,0,0),
+packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,0,0),
+packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,1,1),
+packwordBunkerDamage(1,1,1,1,0,0,1,1,1,1,1,1),
+packwordBunkerDamage(0,0,1,1,1,1,1,1,0,0,1,1),
+packwordBunkerDamage(0,0,1,1,1,1,1,1,0,0,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,1,1,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,1,1,1,1)
+};
+
+const int bunkerDamage2_innner_right[12]=
+{
+packwordBunkerDamage(0,0,0,0,0,1,1,1,1,1,1,1),
+packwordBunkerDamage(0,0,0,0,0,1,1,1,1,1,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,0,0,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,0,0,1,1),
+packwordBunkerDamage(0,0,0,0,1,1,1,1,1,1,1,1),
+packwordBunkerDamage(0,0,0,0,1,1,1,1,1,1,1,1),
+packwordBunkerDamage(0,0,0,0,0,0,1,1,1,1,0,0),
+packwordBunkerDamage(0,0,0,0,0,0,1,1,1,1,0,0),
+packwordBunkerDamage(0,0,0,0,0,0,0,0,1,1,1,1),
+packwordBunkerDamage(0,0,0,0,0,0,0,0,1,1,1,1),
+packwordBunkerDamage(0,0,0,0,0,0,0,0,0,0,1,1),
+packwordBunkerDamage(0,0,0,0,0,0,0,0,0,0,1,1)
+};
+
+const int bunkerDamage2_inner_left[12]=
+{
+packwordBunkerDamage(1,1,1,1,1,1,1,0,0,1,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,0,0,1,1,1),
+packwordBunkerDamage(1,1,0,0,1,1,1,1,1,1,1,0),
+packwordBunkerDamage(1,1,0,0,1,1,1,1,1,1,1,1),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,0,0,0,0),
+packwordBunkerDamage(1,1,1,1,1,1,1,1,0,0,0,0),
+packwordBunkerDamage(1,1,1,1,1,1,0,0,0,0,0,0),
+packwordBunkerDamage(1,1,1,1,1,1,0,0,0,0,0,0),
+packwordBunkerDamage(0,0,1,1,0,0,0,0,0,0,0,0),
+packwordBunkerDamage(0,0,1,1,0,0,0,0,0,0,0,0),
+packwordBunkerDamage(1,1,0,0,0,0,0,0,0,0,0,0),
+packwordBunkerDamage(1,1,0,0,0,0,0,0,0,0,0,0)
 };
 
 const int bunkerDamage3_12x12[12]=

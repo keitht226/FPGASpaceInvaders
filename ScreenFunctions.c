@@ -62,7 +62,7 @@ void init_screen() {
 
 }
 
-//Alien Block ---------------
+//Alien Block ----------------------------------------------------------------
 void write_alien_block_to_memory() {
 	//Get alien block positions
 	point_t alien_block = globals_getAlienBlockPosition();
@@ -75,7 +75,7 @@ void write_alien_block_to_memory() {
 
 }
 
-//Alien Rows top/middle/bottom ------------------
+//Alien Rows top/middle/bottom ----------------------------------------------------
 void write_top_row_aliens() {
 	current_alien = 0;
 	int col_offset = 0;
@@ -158,7 +158,9 @@ void write_bottom_rows_aliens() {
 
 
 //static unsigned short block_x,block_y;
-//Alien Explosion ----------------------------------
+
+
+//Alien Explosion ------------------------------------------------------
 
 void write_explosion_to_memory(int alien_index) {
 //	point_t alien_block = globals_getAlienBlockPosition();
@@ -188,7 +190,7 @@ void write_alien_dead_to_memory(int alien_index) {
 		//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 }
 
-//Tank ---------------------------------------------
+//Tank ---------------------------------------------------------------------
 
 void write_tank_to_memory() {
 	int row_offset = TANK_ROW_OFFSET;
@@ -249,7 +251,7 @@ void write_mothership_black_to_memory() {
 
 
 
-//Bunkers ------------------------------------------
+//Bunkers ----------------------------------------------------------------------
 void write_bunkers_to_memory() {
 
 	int i;
@@ -269,6 +271,7 @@ void write_bunkers_to_memory() {
 									//x  x 9&10 don't need to be touched
 }
 
+//Erosion -------------------------------------------------------------------------
 void write_an_erosion_to_memory(int bunker, int quadrant){
 	xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", bunker, quadrant, (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level);
 
@@ -279,42 +282,18 @@ void write_an_erosion_to_memory(int bunker, int quadrant){
 	int bunker_col_offset = BUNKER_COL_OFFSET + (BUNKER_COL_OFFSET * bunker) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * bunker);
 	int erosion_col_offset = bunker_col_offset + EROSION_ROWCOL * (quadrant % EROSION_QUAD_COLS);
 	//If not zero draw the erosion over the bunker, 0 = no damage, 3 = gone
-	switch((int)globals_bunkers[bunker].quadrants[quadrant].destruction_level){
-		case 1:
-		{
-			 //xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);
-			 //draw bunkerDamage2_12x12
-			 write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage2_12x12, GREEN);
-			 break;
-		 }
-		 case 2:
-		 {
-			 //xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);
-			 //draw bunkerDamage1_12x12
-			 write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage1_12x12, GREEN);
-			 break;
-		 }
-		 case 3:
-		 {
-			// xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);
-			 //draw bunkerDamage0_12x12
-			 write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage0_12x12, GREEN);
-			 break;
-		 }
-		 case 4:
-		 {
-			 //xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);
-			 //draw black or ~bunkerDamage3_12x12 or bunkerDamage3_12x12,BLACK
-			 write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage3_12x12, BLACK);
-			 break;
-		 }
-		 default:
-			 //xil_printf("Unrecognized bunker destruction level\n\r");
-			 break;
-		 }//end of switch
+	int level;
+	level = (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level
+	if(level >= 4){
+		write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage3_12x12, BLACK);
+	}
+	else{
+		write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, get_erosion_bitmap(quadrant, level), GREEN);
+	}
+
 }
 
-//Bullets -------------------------------------------------------------
+//Tank Bullets -------------------------------------------------------------
 void write_tank_bullet_to_memory() {
 	point_t position = globals_getTankBulletPosition();
 	if(!tankBulletOffscreen) {
@@ -325,7 +304,7 @@ void write_tank_bullet_to_memory() {
 	}
 }
 
-//Bullets -------------------------------------------------------------
+//New Tank Bullets -------------------------------------------------------------
 void write_new_tank_bullet_to_memory() {
 	point_t position = globals_getTankBulletPosition();
 	write_pixel_array(position.y, position.x, TANK_BULLET_NEW_ROW, TANK_BULLET_COL, tankBulletNew, YELLOW);
@@ -477,6 +456,77 @@ int const* get_int_bitmap(int i) {
 			return num0;
 		default:
 			return alien_explosion_24x20;
+	}
+}
+
+int const* get_erosion_bitmap(int quad, int level){
+	switch(quad) {
+		case 0://upper left
+		{
+			switch(level){
+				case 1:
+					return bunkerDamage2_left_corner;
+				case 2:
+					return bunkerDamage1_12x12;
+				case 3:
+					return bunkerDamage0_12x12;
+				default:
+					return bunkerDamage3_12x12;
+			}
+		}
+		case 3://upper right
+		{
+			switch(level){
+				case 1:
+					return bunkerDamage2_right_corner;
+				case 2:
+					return bunkerDamage1_12x12;
+				case 3:
+					return bunkerDamage0_12x12;
+				default:
+					return bunkerDamage3_12x12;
+			}
+		}
+		case 5://inner left
+		{
+			switch(level){
+				case 1:
+					return bunkerDamage2_inner_left;
+				case 2:
+					return bunkerDamage1_12x12;
+				case 3:
+					return bunkerDamage0_12x12;
+				default:
+					return bunkerDamage3_12x12;
+			}
+		}
+		case 6://inner right
+		{
+			switch(level){
+				case 1:
+					return bunkerDamage2_innner_right;
+				case 2:
+					return bunkerDamage1_12x12;
+				case 3:
+					return bunkerDamage0_12x12;
+				default:
+					return bunkerDamage3_12x12;
+			}
+		}
+		default:
+		{
+			switch(level){
+				case 1:
+					return bunkerDamage2_12x12;
+				case 2:
+					return bunkerDamage1_12x12;
+				case 3:
+					return bunkerDamage0_12x12;
+				default:
+					return bunkerDamage3_12x12;
+			}
+		}
+
 	}
 }
 

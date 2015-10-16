@@ -28,6 +28,7 @@ void write_explosion_to_memory(int alien_index);
 void write_score_word_to_memory();
 void write_lives_word_to_memory();
 int const* get_int_bitmap(int i);
+int const* get_erosion_bitmap(int i);
 void write_new_tank_bullet_to_memory();
 void write_tank_explosion1();
 void write_tank_explosion2();
