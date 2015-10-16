@@ -139,10 +139,11 @@ unsigned int offset; //used to properly access alien array after at least 1 col 
 #define Y_MIN 30 //considered offscreen if below this for bullets. They will disappear before hitting score or lives
 #define BUNKER_OFFSET 80U
 #define BUNKER_0 BUNKER_OFFSET
-#define BUNKER_1 (BUNKER_OFFSET + (BUNKER_OFFSET * 1) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 1))
-#define BUNKER_2 (BUNKER_OFFSET + (BUNKER_OFFSET * 2) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 2))
-#define BUNKER_3 (BUNKER_OFFSET + (BUNKER_OFFSET * 3) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * 3))
+#define BUNKER_SPACE 80
 #define BUNKER_WIDTH 48
+#define BUNKER_1 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 1)
+#define BUNKER_2 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 2)
+#define BUNKER_3 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 3)
 #define BUNKER_HEIGHT 36
 #define ALIEN_SCORE 10 //score for killing an alien
 #define MOTHERSHIP_SCORE 150 //score for killing mothership

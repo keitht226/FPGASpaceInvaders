@@ -96,8 +96,8 @@ void timer_interrupt_handler(){
 
 
 	//create new alien bullet-----------------------------------------------------------------------
-	  if(!(timer % (rand()%(200+1-50)+50))){//new alien bullet from 2-5 seconds
-		 // newAlienBullet();
+	  if(!(timer % (rand()%(200+1-75)+75))){//new alien bullet from 2-5 seconds
+		 newAlienBullet();
 	  }
 
 	//inc mothership timer. Cannot overflow under correct operation---------------------------------

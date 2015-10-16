@@ -283,7 +283,7 @@ void write_an_erosion_to_memory(int bunker, int quadrant){
 	int erosion_col_offset = bunker_col_offset + EROSION_ROWCOL * (quadrant % EROSION_QUAD_COLS);
 	//If not zero draw the erosion over the bunker, 0 = no damage, 3 = gone
 	int level;
-	level = (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level
+	level = (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level;
 	if(level >= 4){
 		write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage3_12x12, BLACK);
 	}

@@ -238,7 +238,7 @@ void updateBullets(){
 		  for(j = 0; j < 6; j++){//check all six pixels of alien bullet for collision
 			  color[j] = get_pixel_color(globals_bullets[i].position.x+j,(globals_bullets[i].position.y + 18));
 			  if(color[j]==GREEN){//hit tank or bunker
-				(globals_bullets[i].position.y > (BUNKER_HALF_ROW + BUNKER_ROW_OFFSET)) ? killTank() : erodeBunker(globals_bullets[i].position.x,globals_bullets[i].position.y);
+				(globals_bullets[i].position.y > (BUNKER_HALF_ROW + BUNKER_ROW_OFFSET)) ? killTank() : erodeBunker(globals_bullets[i].position.x+j,globals_bullets[i].position.y+24);
 				//xil_printf("bullet.y: %d\n\r",globals_bullets[i].position.y);
 				globals_bullets[i].offScreen = true;
 				break;
@@ -292,15 +292,15 @@ void erodeBunker(unsigned short x, unsigned short y){
   unsigned int row,col;
   //find out which bunker was hit
 
-  if(x >= BUNKER_3 - 2){
+  if(x >= BUNKER_3){
     id = 3;
     bunker_x = BUNKER_3;
   }
-  else if(x >= BUNKER_2 - 2){
+  else if(x >= BUNKER_2){
     id = 2;
     bunker_x = BUNKER_2;
   }
-  else if(x >= BUNKER_1 - 2){
+  else if(x >= BUNKER_1){
     id = 1;
     bunker_x = BUNKER_1;
   }
@@ -315,6 +315,7 @@ void erodeBunker(unsigned short x, unsigned short y){
   //globals_alien = col + (row * 11);
   col = (x - bunker_x ) / (BUNKER_WIDTH / 4);
   row = (y - BUNKER_ROW_OFFSET) / (BUNKER_HEIGHT / 3);
+  xil_printf("alien shot col: %d and x %d\n\r",col,x);
   region = col + (row << 2); //row * 4
   globals_bunkers[id].quadrants[region].destruction_level += 1;
   //xil_printf("Bunker id: %d   destruction_level: %d\n\r",id,globals_bunkers[id].quadrants[region].destruction_level);
