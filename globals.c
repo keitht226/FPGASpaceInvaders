@@ -16,6 +16,7 @@ unsigned short mothershipSpawnCounter = 2000;//mothership appears first time aft
 unsigned int alienExplodeCounter = 1;
 unsigned int numberOfCol = 11;
 bool mothershipState = DEAD;
+unsigned int offset = 0;
 
 const int ALIEN_START = 50;
 const int ROWS_OF_ALIENS = 5;
@@ -102,8 +103,8 @@ point_t globals_getAlienBulletPosition(uint8_t index){
 
 point_t globals_getAlienPosition(uint8_t alien){
   point_t alienPosition;
-  int col = alien % numberOfCol;
-  int row = alien / numberOfCol;
+  int col = alien % 11 - offset;
+  int row = alien / 11;
   int y = globals_getAlienBlockPosition().y + (row * (ALIEN_HEIGHT+ALIEN_ROW_SEPARATION));
   int x = globals_getAlienBlockPosition().x + (col * (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE));
 

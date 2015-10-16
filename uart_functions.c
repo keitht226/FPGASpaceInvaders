@@ -54,6 +54,7 @@ void moveAlienBlock(){
   //move down if all the way at right of screen and change direction
   //if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 && !lowered && blockMovingRight){
   if(right_edge > X_MAX - STOP_DISTANCE - 1 && !lowered && blockMovingRight){
+	xil_printf("right edge: %d\n\r",right_edge);
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x -= BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//the block did not just move down. Can do so next time
@@ -88,7 +89,8 @@ void killAlien(unsigned short x, unsigned short y){
   unsigned int col,row;
   col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE);
   row = (y - globals_getAlienBlockPosition().y) / (ALIEN_HEIGHT + ALIEN_ROW_SEPARATION);
-  globals_alien = col + (row * numberOfCol);
+  globals_alien = col + (row * 11)+offset;
+  xil_printf("killed alien: %d\n\r",globals_alien);
   globals_DeadAliens[globals_alien] = true; //kill the alien
   //last alien in column? If so, adjust column globals
   /*
@@ -112,6 +114,7 @@ void killAlien(unsigned short x, unsigned short y){
 	    leftMostCol++;
 	    numberOfCol--;
 	    rightMostCol--;
+	    offset++;
 	    point_t alienBlockLocation= globals_getAlienBlockPosition();
 	    alienBlockLocation.x = globals_getAlienPosition(leftMostCol).x;
 	    globals_setAlienBlockPosition(alienBlockLocation);

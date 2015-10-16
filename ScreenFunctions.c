@@ -157,33 +157,36 @@ void write_bottom_rows_aliens() {
 }
 
 
-static unsigned short block_x,block_y;
+//static unsigned short block_x,block_y;
 //Alien Explosion ----------------------------------
 
 void write_explosion_to_memory(int alien_index) {
-	point_t alien_block = globals_getAlienBlockPosition();
-	block_x = alien_block.x;
-	block_y = alien_block.y;
-	int row_offset;
-	int col_offset;
-	row_offset = block_y + (alien_index / numberOfCol) * ALIEN_ROW +(alien_index/numberOfCol);// ALIEN_ROW_SEPARATION * (alien_index/numberOfCol);
-	col_offset = block_x + (alien_index % numberOfCol) * ALIEN_COL + (alien_index%numberOfCol) * ALIEN_COLUMN_SEPARATION;
+//	point_t alien_block = globals_getAlienBlockPosition();
+//	block_x = alien_block.x;
+//	block_y = alien_block.y;
+	point_t p = globals_getAlienPosition(alien_index);
+	int row_offset = p.y;
+	int col_offset = p.x;
+//	row_offset = block_y + (alien_index / COLUMNS_OF_ALIENS) * ALIEN_ROW +(alien_index/COLUMNS_OF_ALIENS);// ALIEN_ROW_SEPARATION * (alien_index/numberOfCol);
+//	col_offset = (block_x + (alien_index % COLUMNS_OF_ALIENS) * ALIEN_COL + (alien_index%COLUMNS_OF_ALIENS) * ALIEN_COLUMN_SEPARATION) - (offset * ALIEN_COL + offset * ALIEN_COLUMN_SEPARATION);
 	write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_explosion_24x20, WHITE);
 	//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+
+
 }
 
 void write_alien_dead_to_memory(int alien_index) {
-	point_t alien_block = globals_getAlienBlockPosition();
-	block_x = alien_block.x;
-	block_y = alien_block.y;
-	int row_offset;
-	int col_offset;
-	row_offset = block_y + (alien_index / numberOfCol) * ALIEN_ROW + (alien_index/numberOfCol);// * ALIEN_ROW_SEPARATION;
-	col_offset = block_x + (alien_index % numberOfCol) * ALIEN_COL + (alien_index%numberOfCol) * ALIEN_COLUMN_SEPARATION;
-	write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
-	//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+	//	point_t alien_block = globals_getAlienBlockPosition();
+	//	block_x = alien_block.x;
+	//	block_y = alien_block.y;
+		point_t p = globals_getAlienPosition(alien_index);
+		int row_offset = p.y;
+		int col_offset = p.x;
+	//	row_offset = block_y + (alien_index / COLUMNS_OF_ALIENS) * ALIEN_ROW +(alien_index/COLUMNS_OF_ALIENS);// ALIEN_ROW_SEPARATION * (alien_index/numberOfCol);
+	//	col_offset = (block_x + (alien_index % COLUMNS_OF_ALIENS) * ALIEN_COL + (alien_index%COLUMNS_OF_ALIENS) * ALIEN_COLUMN_SEPARATION) - (offset * ALIEN_COL + offset * ALIEN_COLUMN_SEPARATION);
+		write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, WHITE);
+		//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 }
-
 
 //Tank ---------------------------------------------
 
