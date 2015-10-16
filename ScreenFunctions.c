@@ -294,7 +294,7 @@ void write_bunkers_to_memory() {
 							 break;
 						 }
 						 default:
-							 xil_printf("Unrecognized bunker destruction level\n\r");
+							 //xil_printf("Unrecognized bunker destruction level\n\r");
 							 break;
 						 }//end of switch
 				 }//end of bunker damage check
@@ -314,7 +314,7 @@ void write_bunkers_to_memory() {
 void write_tank_bullet_to_memory() {
 	point_t position = globals_getTankBulletPosition();
 	if(!tankBulletOffscreen) {
-		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBullet_4x18, RED);
+		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBullet_4x18, YELLOW);
 	}
 	else {
 		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBulletBlack, BLACK);
@@ -324,7 +324,7 @@ void write_tank_bullet_to_memory() {
 //Bullets -------------------------------------------------------------
 void write_new_tank_bullet_to_memory() {
 	point_t position = globals_getTankBulletPosition();
-	write_pixel_array(position.y, position.x, TANK_BULLET_NEW_ROW, TANK_BULLET_COL, tankBulletNew, RED);
+	write_pixel_array(position.y, position.x, TANK_BULLET_NEW_ROW, TANK_BULLET_COL, tankBulletNew, YELLOW);
 }
 
 void write_alien_bullets_to_memory() {
@@ -342,19 +342,19 @@ void write_alien_bullets_to_memory() {
 		if(!globals_bullets[i].offScreen){
 			switch(i){
 			case 0:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletT0, RED);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletT0, YELLOW);
 				break;
 			case 1:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletT1, RED);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletT1, YELLOW);
 				break;
 			case 2:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ0, RED);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ0, YELLOW);
 				break;
 			case 3:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ1, RED);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ1, YELLOW);
 				break;
 			default:
-				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ1, RED);
+				write_pixel_array(globals_bullets[i].position.y, globals_bullets[i].position.x, ALIEN_BULLET_ROW, ALIEN_BULLET_COL, alienBulletZ1, YELLOW);
 			}
 		}
 		else {
@@ -370,7 +370,7 @@ void write_alien_bullets_to_memory() {
 //Score, Lives, Bottom Line ---------------------------------------------
 void write_score_to_memory(int current_score) {
 	int score_array[MAX_SCORE_SIZE];
-	xil_printf("score: %d\n\r", current_score);
+	//xil_printf("score: %d\n\r", current_score);
 	int j;
 	for(j = 0; j < MAX_SCORE_SIZE; ++j){
 		int digit;

@@ -4,7 +4,8 @@
 #include <time.h>
 
 static bool lowered;
-static bool newDeadCol;
+static uint8_t leftMostCol = 0;
+static uint8_t rightMostCol = 10;
 
 #define MOTHERSHIP_MIN 600 //6 seconds between spawns
 #define MOTHERSHIP_MAX 2000 //20 seconds between spawns
@@ -40,29 +41,13 @@ void moveTankRight(){
 
 void moveAlienBlock(){
 /*{{{*/
-  static uint8_t leftMostCol = 0;
-  static uint8_t rightMostCol = 10;
-  int i;
-  //only find new value for edge columns if a column was recently killed
-
-  if(newDeadCol){
-    //find left most col
-    for(i = 1;i < 11; ++i){
-      if(globals_deadColumns[i-1] == DEAD){
-        leftMostCol = i;
-      }
-    }
-    //find right most col
-    for(i = 9; i >= 0; ++i){
-      if(globals_deadColumns[i+1] == DEAD){
-        rightMostCol = i;
-      }
-    }
-  }
-
-  newDeadCol = false;
   point_t alienBlockLocation;
   alienBlockLocation = globals_getAlienBlockPosition();
+
+  //only find new value for edge columns if a column was recently killed
+  uint16_t right_edge = globals_getAlienPosition(rightMostCol).x + ALIEN_WIDTH + WIDTH_ALIEN_COL_SPACE;
+  uint16_t left_edge = globals_getAlienPosition(leftMostCol).x;
+
   if(blockMovingRight){
     alienBlockLocation.x += BLOCK_MOVEMENT_X;
   }else{
@@ -71,8 +56,8 @@ void moveAlienBlock(){
   //reference block by left side. If all the way right, change direction to left
   //move down if all the way at right of screen and change direction
   //if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 && !lowered && blockMovingRight){
-  if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 - \
-                            (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE)*(10-rightMostCol) && !lowered && blockMovingRight){
+  if(right_edge > X_MAX - STOP_DISTANCE - 1 && !lowered && blockMovingRight){
+	xil_printf("right_edge: %d\n\r",right_edge);
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x -= BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//the block did not just move down. Can do so next time
@@ -80,8 +65,7 @@ void moveAlienBlock(){
   }
   //move down if all the way at left of screen and change direction
   //else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1 < STOP_DISTANCE  && !lowered && !blockMovingRight){
-  else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1+(WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE)*leftMostCol < \
-          STOP_DISTANCE && !lowered && !blockMovingRight){
+  else if(left_edge + 1  < STOP_DISTANCE && !lowered && !blockMovingRight){
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x += BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//block just moved down. Next move must be to the side
@@ -102,6 +86,7 @@ void moveAlienBlock(){
 
 void killAlien(unsigned short x, unsigned short y){
   /*{{{*/
+  static bool newDeadCol;
   int i;
   unsigned int col,row;
   col = (x - globals_getAlienBlockPosition().x) / (WIDTH_ALIENS + WIDTH_ALIEN_COL_SPACE);
@@ -109,17 +94,32 @@ void killAlien(unsigned short x, unsigned short y){
   globals_alien = col + (row * 11);
   globals_DeadAliens[globals_alien] = true; //kill the alien
   //last alien in column? If so, adjust column globals
+  /*
+   * 0
+   * 11
+   * 22
+   * 33
+   * 44
+   */
+  newDeadCol = true;
   for(i = col; i < col + 45; i+=11){
+	//if any are alive, stop checking
 	if(globals_DeadAliens[i] == false){
+		newDeadCol = false;
 		break;
 	}
-    if(globals_DeadAliens[col + 44] == true){
-      newDeadCol = true;
-    }
-    newDeadCol = true;
   }
   if(newDeadCol){
-	 globals_deadColumns[col] = DEAD;
+	  globals_deadColumns[col] = DEAD;
+	  xil_printf("This column just died: %d\n\r",col);
+	  if(globals_deadColumns[leftMostCol] == DEAD){
+	    leftMostCol++;
+		  xil_printf("left most col: %d\n\r",leftMostCol);
+	  }
+	  if(globals_deadColumns[rightMostCol] == DEAD){
+	    rightMostCol--;
+	    xil_printf("rightmostcol: %d\n\r",rightMostCol);
+	  }
   }
   beginAlienExplosion = true;
   write_explosion_to_memory(globals_alien);
@@ -146,7 +146,7 @@ void newTankBullet(){
 
 static bool deadColumnFt(uint8_t Column){
   int i;/*{{{*/
-  for(i = Column; i <= Column+44;i+=1){
+  for(i = Column; i <= Column+44;i+=11){
     if(!globals_DeadAliens[i]){
       return false;//at least one alien in column is alive
     }
@@ -234,7 +234,7 @@ void updateBullets(){
 			  color[j] = get_pixel_color(globals_bullets[i].position.x+j,(globals_bullets[i].position.y + 18));
 			  if(color[j]==GREEN){//hit tank or bunker
 				(globals_bullets[i].position.y > (BUNKER_HALF_ROW + BUNKER_ROW_OFFSET)) ? killTank() : erodeBunker(globals_bullets[i].position.x,globals_bullets[i].position.y);
-				xil_printf("bullet.y: %d\n\r",globals_bullets[i].position.y);
+				//xil_printf("bullet.y: %d\n\r",globals_bullets[i].position.y);
 				globals_bullets[i].offScreen = true;
 				break;
 			  }
@@ -254,7 +254,7 @@ void updateBullets(){
 		  for(i = 1; i < 3; ++i){//only pixels 2 and 3 in the tank bullet are white
 			  tankColor[i] = get_pixel_color(tankBullet.x+i, tankBullet.y);
 			  if(tankColor[i] != BLACK){
-				xil_printf("tankbullet color: %d\n\r",tankColor[i]);
+				//xil_printf("tankbullet color: %d\n\r",tankColor[i]);
 				tankBulletOffscreen = true;
 				if(tankColor[i] == GREEN){
 					erodeBunker(tankBullet.x,tankBullet.y);
@@ -279,7 +279,7 @@ void updateBullets(){
 
 void erodeBunker(unsigned short x, unsigned short y){
 /*{{{*/
-	xil_printf("entered erode bunker\n\r");
+	//xil_printf("entered erode bunker\n\r");
   unsigned int id;
   unsigned int bunker_x;
   unsigned int region;
@@ -304,10 +304,11 @@ void erodeBunker(unsigned short x, unsigned short y){
   }
 
   //find out which region of the bunker was hit. 3 rows, 4 cols
-  col = (x - bunker_x) / BUNKER_WIDTH;
+  col = (x - bunker_x) % 4;
   row = (y - BUNKER_ROW_OFFSET) / BUNKER_HEIGHT;
-  region = col + (row * 4);
+  region = col + (row << 2); //row * 4
   globals_bunkers[id].quadrants[region].destruction_level += 1;
+  //xil_printf("Bunker id: %d   destruction_level: %d\n\r",id,globals_bunkers[id].quadrants[region].destruction_level);
   write_bunkers_to_memory();
   return;/*}}}*/
 }
@@ -322,7 +323,7 @@ void erodeBunker(unsigned short x, unsigned short y){
 
 void killTank(){
 /*{{{*/
-	xil_printf("kill tank entered\n\r");
+	//xil_printf("kill tank entered\n\r");
   int i;
   --lives;
   write_lives_to_memory();  

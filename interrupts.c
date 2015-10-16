@@ -6,7 +6,11 @@ static bool first = true;
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
+
+
 	if(globals_tankDeath == running){
+		  XGpio_InterruptGlobalDisable(&gpPB);                // Turn off all PB interrupts for now.
+
 		if(first){
 			timer = 1;
 			first = false;
@@ -24,9 +28,29 @@ void timer_interrupt_handler(){
 			globals_tankDeath = stopped;
 			globals_setTankPosition(320);
 			write_tank_to_memory();
+			XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
 		}
 	}
 	else{
+
+	    u32 currentButtonState = XGpio_DiscreteRead(&gpPB, 1);  // Get the current state of the buttons.
+	    // You need to do something here.
+	    if(!(timer % TANK_SPEED)){
+			switch(currentButtonState){
+			  case 8:
+				moveTankLeft();
+				break;
+			  case 1:
+				newTankBullet();
+				break;
+			  case 2:
+				moveTankRight();
+				break;
+			  default:
+				break;
+			}
+	    }
+
 	  //ensure random for mothership and alien bullets
 	  srand(timer);
 
@@ -96,28 +120,6 @@ void timer_interrupt_handler(){
 void pb_interrupt_handler() {
   // Clear the GPIO interrupt.
   XGpio_InterruptGlobalDisable(&gpPB);                // Turn off all PB interrupts for now.
-  u32 currentButtonState = XGpio_DiscreteRead(&gpPB, 1);  // Get the current state of the buttons.
-  // You need to do something here.
-  switch(currentButtonState){
-    case 8:
-      moveTankLeft();
-      break;
-    case 1:
-      newTankBullet();
-      break;
-    case 2:
-      moveTankRight();
-      break;
-    default:
-      break;
-  }
-  //Down 4 / Up 16 / Hour 8 / Min 1 / Sec 2
-  //bit 0 min / 1 sec / 2 down / 3 hour / 4 up
-  //if(currentButtonState == 16){
-	  	//xil_printf(" %d", currentButtonState);
-	   // xil_printf("#");
-  //}
-
 
   XGpio_InterruptClear(&gpPB, 0xFFFFFFFF);            // Ack the PB interrupt.
   XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
