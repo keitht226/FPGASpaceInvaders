@@ -114,10 +114,13 @@ void killAlien(unsigned short x, unsigned short y){
 	  if(globals_deadColumns[offset] == DEAD){
 	    numberOfCol--;
 	    rightMostCol--;
-	    offset++;
+	    xil_printf("offset: %d\n\r",offset);
 	    point_t alienBlockLocation= globals_getAlienBlockPosition();
-	    alienBlockLocation.x = globals_getAlienPosition(offset+1).x;
+	    printf("alienBlockLocation before: %d\n\r", alienBlockLocation.x);
+	    alienBlockLocation.x = globals_getAlienPosition(col + 1).x; //using ORIGINAL arrangement
+	    printf("alienBlockLocation After: %d\n\r", alienBlockLocation.x);
 	    globals_setAlienBlockPosition(alienBlockLocation);
+	    offset++;
 	  }
 	  if(globals_deadColumns[rightMostCol] == DEAD){
 	    rightMostCol--;
@@ -148,7 +151,7 @@ void newTankBullet(){
 
 static bool deadColumnFt(uint8_t Column){
   int i;/*{{{*/
-  for(i = Column; i <= Column+44;i+=numberOfCol){
+  for(i = Column; i <= Column+44;i+=11){
     if(!globals_DeadAliens[i]){
       return false;//at least one alien in column is alive
     }
@@ -177,7 +180,7 @@ void newAlienBullet(){
   bool deadColumn;
   bulletType = rand() % 4; //randomly choose number from 0-3 to represent bullet types
   do{
-    alienColumn = rand() % numberOfCol; //choose which of the 11 columns will shoot the bullet
+    alienColumn = rand() % 11; //choose which of the 11 columns will shoot the bullet
     deadColumn = deadColumnFt(alienColumn);
   }while(deadColumn);
   //xil_printf("column: %d dead: %d\n\r",alienColumn,deadColumn);
