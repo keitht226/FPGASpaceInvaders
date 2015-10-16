@@ -44,15 +44,13 @@ void moveAlienBlock(){
   point_t alienBlockLocation;
   alienBlockLocation = globals_getAlienBlockPosition();
 
-  //only find new value for edge columns if a column was recently killed
-  uint16_t right_edge = globals_getAlienPosition(rightMostCol).x + ALIEN_WIDTH + WIDTH_ALIEN_COL_SPACE;
-  uint16_t left_edge = globals_getAlienPosition(leftMostCol).x;
-
   if(blockMovingRight){
     alienBlockLocation.x += BLOCK_MOVEMENT_X;
   }else{
     alienBlockLocation.x -= BLOCK_MOVEMENT_X;
   }
+  uint16_t right_edge = globals_getAlienPosition(rightMostCol).x+ALIEN_WIDTH+WIDTH_ALIEN_COL_SPACE;
+  uint16_t left_edge = globals_getAlienPosition(leftMostCol).x;
   //reference block by left side. If all the way right, change direction to left
   //move down if all the way at right of screen and change direction
   //if(alienBlockLocation.x > X_MAX - STOP_DISTANCE - BLOCK_WIDTH - BLOCK_SIDE_SPACE-1 && !lowered && blockMovingRight){
@@ -111,7 +109,6 @@ void killAlien(unsigned short x, unsigned short y){
   }
   if(newDeadCol){
 	  globals_deadColumns[col] = DEAD;
-	  xil_printf("This column just died: %d\n\r",col);
 	  if(globals_deadColumns[leftMostCol] == DEAD){
 	    leftMostCol++;
 		  xil_printf("left most col: %d\n\r",leftMostCol);
@@ -309,7 +306,7 @@ void erodeBunker(unsigned short x, unsigned short y){
   region = col + (row << 2); //row * 4
   globals_bunkers[id].quadrants[region].destruction_level += 1;
   //xil_printf("Bunker id: %d   destruction_level: %d\n\r",id,globals_bunkers[id].quadrants[region].destruction_level);
-  write_an_erosion_to_memory(id, region);
+  write_bunkers_to_memory();
   return;/*}}}*/
 }
 
