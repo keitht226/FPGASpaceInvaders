@@ -467,9 +467,9 @@ int const* get_erosion_bitmap(int quad, int level){
 				case 1:
 					return bunkerDamage2_left_corner;
 				case 2:
-					return bunkerDamage1_12x12;
+					return bunkerDamage1_left_corner;
 				case 3:
-					return bunkerDamage0_12x12;
+					return bunkerDamage0_left_corner;
 				default:
 					return bunkerDamage3_12x12;
 			}
@@ -480,9 +480,9 @@ int const* get_erosion_bitmap(int quad, int level){
 				case 1:
 					return bunkerDamage2_right_corner;
 				case 2:
-					return bunkerDamage1_12x12;
+					return bunkerDamage1_right_corner;
 				case 3:
-					return bunkerDamage0_12x12;
+					return bunkerDamage0_right_corner;
 				default:
 					return bunkerDamage3_12x12;
 			}
@@ -493,9 +493,9 @@ int const* get_erosion_bitmap(int quad, int level){
 				case 1:
 					return bunkerDamage2_inner_left;
 				case 2:
-					return bunkerDamage1_12x12;
+					return bunkerDamage1_inner_left;
 				case 3:
-					return bunkerDamage0_12x12;
+					return bunkerDamage0_inner_left;
 				default:
 					return bunkerDamage3_12x12;
 			}
@@ -506,9 +506,9 @@ int const* get_erosion_bitmap(int quad, int level){
 				case 1:
 					return bunkerDamage2_innner_right;
 				case 2:
-					return bunkerDamage1_12x12;
+					return bunkerDamage1_innner_right;
 				case 3:
-					return bunkerDamage0_12x12;
+					return bunkerDamage0_innner_right;
 				default:
 					return bunkerDamage3_12x12;
 			}
