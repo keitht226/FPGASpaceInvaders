@@ -311,7 +311,7 @@ void erodeBunker(unsigned short x, unsigned short y){
   region = col + (row << 2); //row * 4
   globals_bunkers[id].quadrants[region].destruction_level += 1;
   //xil_printf("Bunker id: %d   destruction_level: %d\n\r",id,globals_bunkers[id].quadrants[region].destruction_level);
-  write_an_erosion_to_memory(id, region, row, col);
+  write_an_erosion_to_memory(id, region);
   return;/*}}}*/
 }
 
