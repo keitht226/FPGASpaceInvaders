@@ -211,6 +211,14 @@ void write_tank_explosion2() {
 	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
 }
 
+void write_tank_black() {
+	int row_offset = TANK_ROW_OFFSET;
+	int col_offset = (int) globals_getTankPosition() + BIT_32/2;
+	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_black, GREEN);
+	//write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
+	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+}
+
 //Mothership ---------------------------------------
 
 void write_mothership_to_memory() {
@@ -222,9 +230,9 @@ void write_mothership_to_memory() {
 }
 
 void write_mothership_hit_score_to_memory() {
-	//int row_offset = MOTHERSHIP_ROW_OFFSET;
-	//int col_offset = (int) mothershipPosition;
-	//write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_left, WHITE);
+	int row_offset = MOTHERSHIP_ROW_OFFSET;
+	int col_offset = (int) mothershipPosition;
+	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, motherhsip_score, WHITE);
 	//write_pixel_array(row_offset, col_offset - BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, WHITE);
 	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
 }
@@ -265,7 +273,7 @@ void write_an_erosion_to_memory(int bunker, int quadrant){
 	int erosion_row_offset = BUNKER_ROW_OFFSET + EROSION_ROWCOL * quadrant % EROSION_QUAD_COLS;
 	//Col
 	int bunker_col_offset = BUNKER_COL_OFFSET + (BUNKER_COL_OFFSET * bunker) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * bunker);
-	int erosion_col_offset = bunker_col_offset + EROSION_ROWCOL * quadrant / EROSION_QUAD_ROWS;
+	int erosion_col_offset = bunker_col_offset + (EROSION_ROWCOL * quadrant) % EROSION_QUAD_ROWS;
 	//If not zero draw the erosion over the bunker, 0 = no damage, 3 = gone
 	switch((int)globals_bunkers[bunker].quadrants[quadrant].destruction_level){
 		case 1:
