@@ -271,10 +271,10 @@ void write_an_erosion_to_memory(int bunker, int quadrant){
 
 
 	//Row
-	int erosion_row_offset = BUNKER_ROW_OFFSET + EROSION_ROWCOL * quadrant / EROSION_QUAD_COLS;
+	int erosion_row_offset = BUNKER_ROW_OFFSET + EROSION_ROWCOL * (quadrant / EROSION_QUAD_COLS);
 	//Col
 	int bunker_col_offset = BUNKER_COL_OFFSET + (BUNKER_COL_OFFSET * bunker) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * bunker);
-	int erosion_col_offset = bunker_col_offset + (EROSION_ROWCOL * quadrant) % EROSION_QUAD_COLS;
+	int erosion_col_offset = bunker_col_offset + EROSION_ROWCOL * (quadrant % EROSION_QUAD_COLS);
 	//If not zero draw the erosion over the bunker, 0 = no damage, 3 = gone
 	switch((int)globals_bunkers[bunker].quadrants[quadrant].destruction_level){
 		case 1:
