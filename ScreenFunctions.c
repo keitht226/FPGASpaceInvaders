@@ -68,7 +68,7 @@ void write_alien_block_to_memory() {
 	point_t alien_block = globals_getAlienBlockPosition();
 	alien_block_x = alien_block.x;
 	alien_block_y = alien_block.y;
-	//xil_printf("Moving Aliens with x = %d, y = %d\n\r", alien_block_x, alien_block_y);
+
 	write_top_row_aliens();
 	write_middle_rows_aliens();
 	write_bottom_rows_aliens();
@@ -85,7 +85,7 @@ void write_top_row_aliens() {
 		//If alien is dead, skip and don't draw it
 		if (!globals_DeadAliens[current_alien]) {
 			//check in or out state
-			point_t p = globals_getAlienPosition(alien_index);
+			point_t p = globals_getAlienPosition(current_alien);
 			int row_offset = p.y;
 			int col_offset = p.x;
 			if (alienBlockState) { //subtracted 8 because the top row aliens have extra black pixels on top
@@ -115,7 +115,7 @@ void write_middle_rows_aliens() {
 		}
 		//If alien is dead, skip and don't draw it
 		if (!globals_DeadAliens[current_alien]) {
-			point_t p = globals_getAlienPosition(alien_index);
+			point_t p = globals_getAlienPosition(current_alien);
 			int row_offset = p.y;
 			int col_offset = p.x;
 			//check in or out state
@@ -147,7 +147,7 @@ void write_bottom_rows_aliens() {
 		}
 		//If alien is dead, skip and don't draw it
 		if (!globals_DeadAliens[current_alien]) {
-			point_t p = globals_getAlienPosition(alien_index);
+			point_t p = globals_getAlienPosition(current_alien);
 			int row_offset = p.y;
 			int col_offset = p.x;
 			//check in or out state
@@ -206,7 +206,7 @@ void write_tank_to_memory() {
 	int col_offset = (int) globals_getTankPosition();
 	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_left, GREEN);
 	write_pixel_array(row_offset, col_offset + BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
-	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+
 }
 
 void write_tank_explosion1() {
@@ -214,7 +214,7 @@ void write_tank_explosion1() {
 	int col_offset = (int) globals_getTankPosition() + BIT_32/2;
 	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_explosion_1, GREEN);
 	//write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
-	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+
 }
 
 void write_tank_explosion2() {
@@ -222,7 +222,7 @@ void write_tank_explosion2() {
 	int col_offset = (int) globals_getTankPosition() + BIT_32/2;
 	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_explosion_2, GREEN);
 	//write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
-	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+
 }
 
 void write_tank_black() {
@@ -230,7 +230,7 @@ void write_tank_black() {
 	int col_offset = (int) globals_getTankPosition() + BIT_32/2;
 	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_black, GREEN);
 	//write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
-	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+
 }
 
 //Mothership ---------------------------------------
@@ -240,7 +240,7 @@ void write_mothership_to_memory() {
 	int col_offset = (int) mothershipPosition;
 	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_left, RED);
 	//write_pixel_array(row_offset, col_offset + BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, RED);
-	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+
 }
 
 void write_mothership_hit_score_to_memory() {
@@ -248,14 +248,14 @@ void write_mothership_hit_score_to_memory() {
 	int col_offset = (int) mothershipPosition;
 	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_score, WHITE);
 	//write_pixel_array(row_offset, col_offset - BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, WHITE);
-	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+
 }
 
 void write_mothership_black_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
 	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, BIT_32, mothership_black, GREEN);
-	//xil_printf("Wrote tank: row = %d, col = %d\n\r", row_offset, col_offset);
+
 }
 
 
@@ -282,7 +282,7 @@ void write_bunkers_to_memory() {
 
 //Erosion -------------------------------------------------------------------------
 void write_an_erosion_to_memory(int bunker, int quadrant){
-	xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", bunker, quadrant, (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level);
+
 
 
 	//Row
@@ -362,7 +362,7 @@ void write_alien_bullets_to_memory() {
 //Score, Lives, Bottom Line ---------------------------------------------
 void write_score_to_memory(int current_score) {
 	int score_array[MAX_SCORE_SIZE];
-	//xil_printf("score: %d\n\r", current_score);
+
 	int j;
 	for(j = 0; j < MAX_SCORE_SIZE; ++j){
 		int digit;
@@ -371,10 +371,6 @@ void write_score_to_memory(int current_score) {
 		current_score = current_score / 10;
 	}
 
-	/*int k;
-	for(k = 0; k < MAX_SCORE_SIZE; ++k){
-		xil_printf("digits: %d\n\r", score_array[k]);
-	}*/
 
 	int i;
 	i = MAX_SCORE_SIZE-1;
