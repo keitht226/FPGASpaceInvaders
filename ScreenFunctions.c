@@ -266,42 +266,42 @@ void write_bunkers_to_memory() {
 									//x  x 9&10 don't need to be touched
 }
 
-void write_an_erosion_to_memory(int bunker, int quadrant){
-	xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", bunker, quadrant, (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level);
+void write_an_erosion_to_memory(int row, int col){
+	//xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", bunker, quadrant, (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level);
 
 	//Row
-	int erosion_row_offset = BUNKER_ROW_OFFSET + EROSION_ROWCOL * quadrant % EROSION_QUAD_COLS;
+	//int erosion_row_offset = BUNKER_ROW_OFFSET + EROSION_ROWCOL * quadrant % EROSION_QUAD_COLS;
 	//Col
-	int bunker_col_offset = BUNKER_COL_OFFSET + (BUNKER_COL_OFFSET * bunker) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * bunker);
-	int erosion_col_offset = bunker_col_offset + (EROSION_ROWCOL * quadrant) % EROSION_QUAD_ROWS;
+	//int bunker_col_offset = BUNKER_COL_OFFSET + (BUNKER_COL_OFFSET * bunker) + ((BUNKER_LEFT_COL + BUNKER_RIGHT_COL) * bunker);
+	//int erosion_col_offset = bunker_col_offset + (EROSION_ROWCOL * quadrant) % EROSION_QUAD_ROWS;
 	//If not zero draw the erosion over the bunker, 0 = no damage, 3 = gone
 	switch((int)globals_bunkers[bunker].quadrants[quadrant].destruction_level){
 		case 1:
 		{
 			 //xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);
 			 //draw bunkerDamage2_12x12
-			 write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage2_12x12, GREEN);
+			 write_pixel_array(row, col, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage2_12x12, GREEN);
 			 break;
 		 }
 		 case 2:
 		 {
 			 //xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);
 			 //draw bunkerDamage1_12x12
-			 write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage1_12x12, GREEN);
+			 write_pixel_array(row, col, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage1_12x12, GREEN);
 			 break;
 		 }
 		 case 3:
 		 {
 			// xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);
 			 //draw bunkerDamage0_12x12
-			 write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage0_12x12, GREEN);
+			 write_pixel_array(row, col, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage0_12x12, GREEN);
 			 break;
 		 }
 		 case 4:
 		 {
 			 //xil_printf("Bunker = %d, quadrant = %d, destruction level = %d\n\r", i, j, (int)globals_bunkers[i].quadrants[j].destruction_level);
 			 //draw black or ~bunkerDamage3_12x12 or bunkerDamage3_12x12,BLACK
-			 write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage3_12x12, BLACK);
+			 write_pixel_array(row, col, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage3_12x12, BLACK);
 			 break;
 		 }
 		 default:
