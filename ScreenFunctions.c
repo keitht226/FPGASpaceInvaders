@@ -166,7 +166,7 @@ void write_explosion_to_memory(int alien_index) {
 	block_y = alien_block.y;
 	int row_offset;
 	int col_offset;
-	row_offset = block_y + (alien_index / 11) * ALIEN_ROW + ALIEN_ROW_SEPARATION;// * (alien_index/11);
+	row_offset = block_y + (alien_index / 11) * ALIEN_ROW +(alien_index/11);// ALIEN_ROW_SEPARATION * (alien_index/11);
 	col_offset = block_x + (alien_index % 11) * ALIEN_COL + (alien_index%11) * ALIEN_COLUMN_SEPARATION;
 	write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_explosion_24x20, WHITE);
 	//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
@@ -178,7 +178,7 @@ void write_alien_dead_to_memory(int alien_index) {
 	block_y = alien_block.y;
 	int row_offset;
 	int col_offset;
-	row_offset = block_y + (alien_index / 11) * ALIEN_ROW + (alien_index/11) * ALIEN_ROW_SEPARATION;
+	row_offset = block_y + (alien_index / 11) * ALIEN_ROW + (alien_index/11);// * ALIEN_ROW_SEPARATION;
 	col_offset = block_x + (alien_index % 11) * ALIEN_COL + (alien_index%11) * ALIEN_COLUMN_SEPARATION;
 	write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 	//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);

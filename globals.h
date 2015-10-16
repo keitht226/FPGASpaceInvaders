@@ -131,6 +131,7 @@ bool globals_mothershipState;
 bool globals_deadColumns[10]; //dead columns 
 bool globals_tankDeath;
 bool beginAlienExplosion;
+unsigned int numberOfCol;
 unsigned int globals_alien;
 unsigned short mothershipPosition;
 
@@ -149,6 +150,7 @@ unsigned short mothershipPosition;
 #define DEAD 1
 #define ALIVE 0
 #define MOTHERSHIP_MOVEMENT 2
+#define TOP_OF_SCREEN 32
 
 /****************       end lab4      *************/
 
