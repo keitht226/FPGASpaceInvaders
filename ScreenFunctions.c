@@ -105,7 +105,7 @@ void write_top_row_aliens() {
 void write_middle_rows_aliens() {
 	//Second row of aliens
 	//current_alien is now 11
-	while (current_alien < 33) {
+	while (current_alien < MAX_ALIEN_MID_ROW) {
 		point_t p = globals_getAlienPosition(current_alien);
 		int row_offset = p.y;
 		int col_offset = p.x;
@@ -129,7 +129,7 @@ void write_middle_rows_aliens() {
 void write_bottom_rows_aliens() {
 	//4rd row of aliens	
 	//current_alien is now 33
-	while (current_alien < 55) {
+	while (current_alien < MAX_ALIEN_BOTTOM) {
 		point_t p = globals_getAlienPosition(current_alien);
 		int row_offset = p.y;
 		int col_offset = p.x;
@@ -223,8 +223,8 @@ void write_tank_black() {
 void write_mothership_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
-	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL + 12, mothership_left, RED);
-	write_pixel_array(row_offset, col_offset + BIT_32, MOTHERSHIP_ROW + 15, MOTHERSHIP_COL, mothership_right, RED);
+	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL + M_SHIP_LEFT_OFFSET, mothership_left, RED);
+	write_pixel_array(row_offset, col_offset + BIT_32, MOTHERSHIP_ROW + M_SHIP_RIGHT_OFFSET, MOTHERSHIP_COL, mothership_right, RED);
 
 }
 
@@ -239,7 +239,7 @@ void write_mothership_hit_score_to_memory() {
 void write_mothership_black_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
-	write_pixel_array(row_offset, col_offset + (BIT_32/2)-2, MOTHERSHIP_ROW, BIT_32, mothership_black, BLACK);
+	write_pixel_array(row_offset, col_offset + M_SHIP_BLACK_OFFSET, MOTHERSHIP_ROW, BIT_32, mothership_black, BLACK);
 
 }
 
@@ -278,13 +278,13 @@ void write_an_erosion_to_memory(int bunker, int quadrant){
 	//If not zero draw the erosion over the bunker, 0 = no damage, 3 = gone
 	int level;
 	level = (int)globals_bunkers[bunker].quadrants[quadrant].destruction_level;
-	if(level >= 4){
+	if(level >= MAX_EROSION){
 		write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, bunkerDamage3_12x12, BLACK);
 	}
 	else{
 		write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, get_erosion_bitmap(quadrant, level), GREEN);
 	}
-	xil_printf("eroded a bunker\n\r");
+	//xil_printf("eroded a bunker\n\r");
 }
 
 //Tank Bullets -------------------------------------------------------------
@@ -295,7 +295,7 @@ void write_tank_bullet_to_memory() {
 	}
 	else {
 		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBulletBlack, BLACK);
-		xil_printf("printed a black bullet at x: %d y: %d\n\r",position.x,position.y);
+		//xil_printf("printed a black bullet at x: %d y: %d\n\r",position.x,position.y);
 	}
 }
 
@@ -352,9 +352,9 @@ void write_score_to_memory(int current_score) {
 	int j;
 	for(j = 0; j < MAX_SCORE_SIZE; ++j){
 		int digit;
-		digit = current_score % 10;
+		digit = current_score % TENS;
 		score_array[j] = digit;
-		current_score = current_score / 10;
+		current_score = current_score / TENS;
 	}
 
 
@@ -364,11 +364,11 @@ void write_score_to_memory(int current_score) {
 		if(score_array[i]) {
 			int offset_multiplier = 0;
 			while(i){
-				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + (CHAR_WIDTH * offset_multiplier) + offset_multiplier*5, CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
+				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + (CHAR_WIDTH * offset_multiplier) + offset_multiplier*SCORE_MULTIPLIER, CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
 				--i;
 				++offset_multiplier;
 			}
-			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + (CHAR_WIDTH * offset_multiplier) + offset_multiplier*5, CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
+			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + (CHAR_WIDTH * offset_multiplier) + offset_multiplier*SCORE_MULTIPLIER, CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
 		}
 		if(i == 0){
 			break;
@@ -381,11 +381,11 @@ void write_score_to_memory(int current_score) {
 
 void write_score_word_to_memory() {
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterS, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterC, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterO, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 10 + 6*CHAR_WIDTH + 2*20, CHAR_HEIGHT, CHAR_WIDTH, num0, YELLOW);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + LETTER_SPACER, CHAR_HEIGHT, CHAR_WIDTH, letterC, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + LETTER_SPACER*2, CHAR_HEIGHT, CHAR_WIDTH, letterO, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + LETTER_SPACER*3, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH + LETTER_SPACER*4, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + START_0 + 6*CHAR_WIDTH + LETTER_SPACER*20, CHAR_HEIGHT, CHAR_WIDTH, num0, YELLOW);
 }
 
 
@@ -409,10 +409,10 @@ void write_lives_to_memory() {
 
 void write_lives_word_to_memory() {
 	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterL, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterI, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterV, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterS, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + CHAR_WIDTH + LETTER_SPACER, CHAR_HEIGHT, CHAR_WIDTH, letterI, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 2*CHAR_WIDTH + LETTER_SPACER*2, CHAR_HEIGHT, CHAR_WIDTH, letterV, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 3*CHAR_WIDTH + LETTER_SPACER*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 4*CHAR_WIDTH + LETTER_SPACER*4, CHAR_HEIGHT, CHAR_WIDTH, letterS, PURPLE);
 }
 
 
@@ -420,7 +420,7 @@ void write_lives_word_to_memory() {
 void write_bottom_line_to_memory() {
 	int row;
 	int col;
-	for (row = GROUND_OFFSET; row < GROUND_OFFSET+3; ++row) {
+	for (row = GROUND_OFFSET; row < GROUND_OFFSET + GROUND_WIDTH; ++row) {
 		for (col = 0; col < X_MAX; ++col) {
 			//make the pixel at the location appear
 			framePointer0[row * X_MAX + col] = RED;
@@ -460,15 +460,15 @@ void write_game_over_to_memory(){
 		}
 	}//end of row for loop*/
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterG, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterA, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterM, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + LETTER_SPACER, CHAR_HEIGHT, CHAR_WIDTH, letterA, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + LETTER_SPACER*2, CHAR_HEIGHT, CHAR_WIDTH, letterM, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + LETTER_SPACER*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
 
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH + 2*5, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 6*CHAR_WIDTH + 2*6, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 7*CHAR_WIDTH + 2*7, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 8*CHAR_WIDTH + 2*8, CHAR_HEIGHT, CHAR_WIDTH, letterO, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 9*CHAR_WIDTH + 2*9, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH + LETTER_SPACER*5, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 6*CHAR_WIDTH + LETTER_SPACER*6, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 7*CHAR_WIDTH + LETTER_SPACER*7, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 8*CHAR_WIDTH + LETTER_SPACER*8, CHAR_HEIGHT, CHAR_WIDTH, letterO, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 9*CHAR_WIDTH + LETTER_SPACER*9, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
 }
 
 

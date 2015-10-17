@@ -5,6 +5,16 @@
 
 #define FRAME_BUFFER_0_ADDR 0xC1000000  // Starting location in DDR where we will store the images that we display.
 #define SCORE_WORD_SIZE 5
+#define MAX_ALIEN_MID_ROW 33
+#define MAX_ALIEN_BOTTOM 55
+#define M_SHIP_LEFT_OFFSET 12
+#define M_SHIP_RIGHT_OFFSET 15
+#define M_SHIP_BLACK_OFFSET 14
+#define TENS 10
+#define SCORE_MULTIPLIER 5
+#define START_0 10
+#define LETTER_SPACER 2
+#define GROUND_WIDTH 3
 
 void init_monitor();
 void init_screen();
