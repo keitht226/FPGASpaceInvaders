@@ -90,9 +90,9 @@ void timer_interrupt_handler(){
 		if(mothershipPosition + MOTHERSHIP_WIDTH >= X_MAX-6){
 			mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
 			globals_mothershipState = DEAD;
-			mothershipPosition = 0;
 			xil_printf("mothership position: %d\n\r",mothershipPosition);
 			write_mothership_black_to_memory();
+			mothershipPosition = 0;
 		}
 		else
 			write_mothership_to_memory();

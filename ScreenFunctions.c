@@ -38,6 +38,7 @@ void init_monitor() {
 	}//end of row for loop*/
 
 	init_screen();
+	movedDown = false;
 }
 
 void init_screen() {
@@ -64,60 +65,52 @@ void init_screen() {
 
 //Alien Block ----------------------------------------------------------------
 void write_alien_block_to_memory() {
-	//Get alien block positions
-	point_t alien_block = globals_getAlienBlockPosition();
-	alien_block_x = alien_block.x;
-	alien_block_y = alien_block.y;
-
+	movedDown = 0;
 	write_top_row_aliens();
 	write_middle_rows_aliens();
 	write_bottom_rows_aliens();
 
 }
 
+void write_dead_aliens_to_memory() {
+	movedDown = 1;
+	write_top_row_aliens();
+	write_middle_rows_aliens();
+	write_bottom_rows_aliens();
+}
+
 //Alien Rows top/middle/bottom ----------------------------------------------------
 void write_top_row_aliens() {
 	current_alien = 0;
-	//int col_offset = 0;
 	while (current_alien < COLUMNS_OF_ALIENS) {
-		//set column offset
-		//col_offset = alien_block_x + (ALIEN_COL * (current_alien % numberOfCol)) + (ALIEN_COLUMN_SEPARATION * (current_alien % numberOfCol));
+		point_t p = globals_getAlienPosition(current_alien);
+		int row_offset = p.y;
+		int col_offset = p.x;
 		//If alien is dead, skip and don't draw it
 		if (!globals_DeadAliens[current_alien]) {
 			//check in or out state
-			point_t p = globals_getAlienPosition(current_alien);
-			int row_offset = p.y;
-			int col_offset = p.x;
 			if (alienBlockState) { //subtracted 8 because the top row aliens have extra black pixels on top
 				write_pixel_array(row_offset - TOP_ROW_ALIENS_EXTRA_PIXELS, col_offset, ALIEN_TOP_ROW, ALIEN_COL, alien_top_out, WHITE);
 			} else {
 				write_pixel_array(row_offset - TOP_ROW_ALIENS_EXTRA_PIXELS, col_offset, ALIEN_TOP_ROW, ALIEN_COL, alien_top_in, WHITE);
 			}
 		}
-		else{
+		else if (movedDown){
 			//Write black space
-			//write_pixel_array(alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+			//write_pixel_array(row_offset - TOP_ROW_ALIENS_EXTRA_PIXELS, col_offset, ALIEN_TOP_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 		}
 		++current_alien;
 	}
 }
 void write_middle_rows_aliens() {
 	//Second row of aliens
-	//int row_offset = ALIEN_ROW;
-	//int col_offset;
 	//current_alien is now 11
 	while (current_alien < 33) {
-		//set column offset
-		//col_offset = alien_block_x + (ALIEN_COL * (current_alien % numberOfCol) + (ALIEN_COLUMN_SEPARATION * (current_alien % numberOfCol)));
-		if (current_alien > 21) {
-			//3rd row of aliens
-			//row_offset = ALIEN_ROW * 2;
-		}
+		point_t p = globals_getAlienPosition(current_alien);
+		int row_offset = p.y;
+		int col_offset = p.x;
 		//If alien is dead, skip and don't draw it
 		if (!globals_DeadAliens[current_alien]) {
-			point_t p = globals_getAlienPosition(current_alien);
-			int row_offset = p.y;
-			int col_offset = p.x;
 			//check in or out state
 			if (alienBlockState) {
 				write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_middle_out, WHITE);
@@ -126,30 +119,22 @@ void write_middle_rows_aliens() {
 				write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_middle_in, WHITE);
 			}
 		}
-		else{
+		else if(movedDown){
 			//Write black space
-			//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+			write_pixel_array(row_offset + TOP_ROW_ALIENS_EXTRA_PIXELS/2, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 		}
 		++current_alien;
 	}
 }
 void write_bottom_rows_aliens() {
 	//4rd row of aliens	
-	//int row_offset = ALIEN_ROW * 3;
-	//int col_offset = 0;
 	//current_alien is now 33
 	while (current_alien < 55) {
-		//set column offset
-		// = alien_block_x + (ALIEN_COL * (current_alien % numberOfCol)) + (ALIEN_COLUMN_SEPARATION * (current_alien % numberOfCol));
-		if (current_alien > 43) {
-			//5th Row of aliens
-			//row_offset = ALIEN_ROW * 4;
-		}
+		point_t p = globals_getAlienPosition(current_alien);
+		int row_offset = p.y;
+		int col_offset = p.x;
 		//If alien is dead, skip and don't draw it
 		if (!globals_DeadAliens[current_alien]) {
-			point_t p = globals_getAlienPosition(current_alien);
-			int row_offset = p.y;
-			int col_offset = p.x;
 			//check in or out state
 			if (alienBlockState) {
 				write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_bottom_out, WHITE);
@@ -157,9 +142,9 @@ void write_bottom_rows_aliens() {
 				write_pixel_array(row_offset, col_offset, ALIEN_ROW, ALIEN_COL, alien_bottom_in, WHITE);
 			}
 		}
-		else{
+		else if(movedDown){
 			//Write black space
-			//write_pixel_array(row_offset + alien_block_y, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
+			write_pixel_array(row_offset + TOP_ROW_ALIENS_EXTRA_PIXELS, col_offset, ALIEN_ROW, ALIEN_COL, alien_dead_24x16, BLACK);
 		}
 		++current_alien;
 	}
@@ -246,7 +231,7 @@ void write_mothership_to_memory() {
 void write_mothership_hit_score_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
-	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, BIT_32, mothership_score, WHITE);
+	write_pixel_array(row_offset, col_offset + BIT_32/2, MOTHERSHIP_ROW, BIT_32, mothership_score, WHITE);
 	//write_pixel_array(row_offset, col_offset - BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, WHITE);
 
 }
@@ -254,7 +239,7 @@ void write_mothership_hit_score_to_memory() {
 void write_mothership_black_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
-	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, BIT_32, mothership_black, BLACK);
+	write_pixel_array(row_offset, col_offset + (BIT_32/2)-2, MOTHERSHIP_ROW, BIT_32, mothership_black, BLACK);
 
 }
 
@@ -379,11 +364,11 @@ void write_score_to_memory(int current_score) {
 		if(score_array[i]) {
 			int offset_multiplier = 0;
 			while(i){
-				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
+				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + (CHAR_WIDTH * offset_multiplier) + offset_multiplier*5, CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
 				--i;
 				++offset_multiplier;
 			}
-			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
+			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + (CHAR_WIDTH * offset_multiplier) + offset_multiplier*5, CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
 		}
 		if(i == 0){
 			break;
@@ -400,7 +385,7 @@ void write_score_word_to_memory() {
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterO, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 10 + 6*CHAR_WIDTH + 2*10, CHAR_HEIGHT, CHAR_WIDTH, num0, YELLOW);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 10 + 6*CHAR_WIDTH + 2*20, CHAR_HEIGHT, CHAR_WIDTH, num0, YELLOW);
 }
 
 

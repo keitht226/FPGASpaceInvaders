@@ -36,10 +36,12 @@ void write_alien_dead_to_memory(int alien_index);
 void write_an_erosion_to_memory(int bunker, int quadrant);
 void write_tank_black();
 void write_game_over_to_memory();
+void write_dead_aliens_to_memory();
 
 int alien_block_x;
 int alien_block_y;
 int current_alien;
+int movedDown;
 unsigned int * framePointer0;
 unsigned int * framePointer1;
 

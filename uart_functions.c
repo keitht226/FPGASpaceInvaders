@@ -57,6 +57,8 @@ void moveAlienBlock(){
     alienBlockLocation.x -= BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//the block did not just move down. Can do so next time
     blockMovingRight = false;
+    globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
+    write_dead_aliens_to_memory();
   }
   //move down if all the way at left of screen and change direction
   //else if(alienBlockLocation.x+BLOCK_SIDE_SPACE+1 < STOP_DISTANCE  && !lowered && !blockMovingRight){
@@ -65,11 +67,13 @@ void moveAlienBlock(){
     alienBlockLocation.x += BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//block just moved down. Next move must be to the side
     blockMovingRight = true;
+    globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
+    write_dead_aliens_to_memory();
   }
   else{
+	globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
     lowered = false;//the block did not just move down. Can do so next time
   }
-  globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
   alienBlockState = !alienBlockState;
   write_alien_block_to_memory();
   return;/*}}}*/
