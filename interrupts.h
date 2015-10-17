@@ -10,7 +10,9 @@
 #include "globals.h"
 
 //moves about every half_second
-#define ALIEN_SPEED 50
+#define ALIEN_SPEED1 50
+#define ALIEN_SPEED2 40
+#define ALIEN_SPEED3 30
 //faster than alien speed by considerable amount
 #define MOTHERSHIP_SPEED 5
 #define EXPLODE_TIME 200 //explode time for tank

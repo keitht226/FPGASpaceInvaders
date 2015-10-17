@@ -26,6 +26,7 @@ void timer_interrupt_handler(){
 			first = true;
 			timer = 1;
 			globals_tankDeath = stopped;
+			write_tank_black();
 			globals_setTankPosition(320);
 			write_tank_to_memory();
 			XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
@@ -55,8 +56,20 @@ void timer_interrupt_handler(){
 	  srand(timer);
 
 	//move alien block----------------------------------------------------------------------------
-	  if(!(timer%ALIEN_SPEED))
-		moveAlienBlock();
+	  if(dead_alien_count > 34){
+		  if(!(timer%ALIEN_SPEED3)){
+			  moveAlienBlock();
+		  }
+	  }
+	  else if(dead_alien_count > 17){
+		  if(!(timer%ALIEN_SPEED2)){
+			  moveAlienBlock();
+		  }
+	  }else{
+		  if(!(timer%ALIEN_SPEED1)){
+			  moveAlienBlock();
+		  }
+	  }
 
 
 	//if mothership is present, move mothership-----------------------------------------------------
@@ -85,6 +98,7 @@ void timer_interrupt_handler(){
 		  if(alienExplodeCounter == ALIEN_EXPLODE_TIME){
 			  write_alien_dead_to_memory(globals_alien);
 			  alienExplodeCounter = 1;
+			  beginAlienExplosion = false;
 		  }
 	  }
 

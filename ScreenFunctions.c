@@ -228,7 +228,7 @@ void write_tank_explosion2() {
 void write_tank_black() {
 	int row_offset = TANK_ROW_OFFSET;
 	int col_offset = (int) globals_getTankPosition() + BIT_32/2;
-	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_black, GREEN);
+	write_pixel_array(row_offset, col_offset, TANK_ROW, TANK_COL, tank_black, BLACK);
 	//write_pixel_array(row_offset, col_offset - BIT_32, TANK_ROW, TANK_COL, tank_right, GREEN);
 
 }

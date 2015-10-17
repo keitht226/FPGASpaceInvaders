@@ -10,6 +10,7 @@ bool globals_tankDeath = stopped;
 bool tankBulletOffscreen = true;
 bool alienBlockState = LEGS_IN;
 bool beginAlienExplosion = false;
+unsigned int dead_alien_count = 0;
 unsigned int score = 0;
 unsigned int lives = 3;
 unsigned short mothershipSpawnCounter = 2000;//mothership appears first time after 20 seconds. All following is random

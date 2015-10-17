@@ -135,6 +135,7 @@ unsigned int numberOfCol;
 unsigned int globals_alien;
 unsigned short mothershipPosition;
 unsigned int offset; //used to properly access alien array after at least 1 col has been killed
+unsigned int dead_alien_count;
 
 #define Y_MIN 30 //considered offscreen if below this for bullets. They will disappear before hitting score or lives
 #define BUNKER_OFFSET 80U

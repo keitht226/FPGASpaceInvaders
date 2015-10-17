@@ -81,6 +81,7 @@ void moveAlienBlock(){
 
 void killAlien(unsigned short x, unsigned short y){
   /*{{{*/
+  dead_alien_count++;
   static bool newDeadCol;
   int i;
   unsigned int col,row;
@@ -109,9 +110,8 @@ void killAlien(unsigned short x, unsigned short y){
 	  globals_deadColumns[col+offset] = DEAD; //set col to dead according to ORIGINAL arrangement
 	  if(globals_deadColumns[offset] == DEAD){
 	    numberOfCol--;
-	    rightMostCol--;
 	    point_t alienBlockLocation= globals_getAlienBlockPosition();
-	    alienBlockLocation.x = globals_getAlienPosition(col + 1).x; //using ORIGINAL arrangement
+	    alienBlockLocation.x = globals_getAlienPosition(offset + 1).x; //using ORIGINAL arrangement
 	    globals_setAlienBlockPosition(alienBlockLocation);
 	    offset++;
 	  }
@@ -177,7 +177,7 @@ void newAlienBullet(){
     deadColumn = deadColumnFt(alienColumn);
   }while(deadColumn);
   uint8_t bestLiveAlien;
-  for(i = alienColumn+(4*numberOfCol); i >= alienColumn; i-=numberOfCol){//advance through rows in column
+  for(i = alienColumn+(4*11); i >= alienColumn; i-=11){//advance through rows in column
     if(globals_DeadAliens[i] == false){
       bestLiveAlien = i;
       break;
@@ -244,12 +244,15 @@ void updateBullets(){
 				tankBulletOffscreen = true;
 				if(tankColor[i] == GREEN){
 					erodeBunker(tankBullet.x+i,tankBullet.y);
+					break;
 				}
 				if(tankColor[i] == RED){
 					killMothership();
+					break;
 				}
 				if(tankColor[i] == WHITE){
 					killAlien(tankBullet.x+i,tankBullet.y);
+					break;
 				}
 			  }
 		  }
@@ -315,7 +318,6 @@ void killTank(){
   int i;
   --lives;
   write_lives_to_memory();  
-  xil_printf("why am I here?\n\r");
   globals_tankDeath = running;
   for(i = 0; i < 4; i++){
     globals_bullets[i].offScreen = true;
