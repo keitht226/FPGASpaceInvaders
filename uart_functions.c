@@ -207,9 +207,10 @@ void newAlienBullet(){
 */
 
 void updateBullets(){
-  static enum {MOTHERSHIP,ALIEN,BUNKER} action;
+  static enum {MOTHERSHIP,ALIEN,BUNKER,CONTINUE} action;
+  action = CONTINUE;
   //move all alien bullets down/*{{{*/
-  int i,j;
+  int i,j = 0;
   int color[6];
   int tankColor[4];
   for(i = 0; i<4;i++){//iterate through alien bullet array
@@ -245,22 +246,39 @@ void updateBullets(){
 			  if(tankColor[i] != BLACK){
 				tankBulletOffscreen = true;
 				if(tankColor[i] == GREEN){
-					erodeBunker(tankBullet.x+i,tankBullet.y);
+					//erodeBunker(tankBullet.x+i,tankBullet.y);
+					action = BUNKER;
 					break;
 				}
 				if(tankColor[i] == RED){
-					killMothership();
+					action = MOTHERSHIP;
+					//killMothership();
 					break;
 				}
 				if(tankColor[i] == WHITE){
-					killAlien(tankBullet.x+i,tankBullet.y);
+					action = ALIEN;
+					//killAlien(tankBullet.x+i,tankBullet.y);
 					break;
 				}
 			  }
 		  }
 	  }
-
 	  write_tank_bullet_to_memory();
+	  switch(action){
+		  case BUNKER:
+			  erodeBunker(tankBullet.x+i,tankBullet.y);
+			  break;
+		  case MOTHERSHIP:
+			  killMothership();
+			  break;
+		  case ALIEN:
+			  killAlien(tankBullet.x+i,tankBullet.y);
+			  break;
+		  case CONTINUE:
+			  break;
+		  default:
+			  break;
+		  }
   }
 
   return;/*}}}*/
