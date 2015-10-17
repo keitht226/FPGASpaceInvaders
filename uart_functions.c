@@ -207,6 +207,7 @@ void newAlienBullet(){
 */
 
 void updateBullets(){
+  static enum {MOTHERSHIP,ALIEN,BUNKER} action;
   //move all alien bullets down/*{{{*/
   int i,j;
   int color[6];
