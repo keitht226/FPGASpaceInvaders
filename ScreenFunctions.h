@@ -15,6 +15,7 @@
 #define START_0 10
 #define LETTER_SPACER 2
 #define GROUND_WIDTH 3
+#define NEW_BULLET_SPACER 14
 
 void init_monitor();
 void init_screen();
