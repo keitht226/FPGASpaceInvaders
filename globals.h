@@ -164,6 +164,7 @@ unsigned int dead_alien_count;
 #define COLOR_BLACK 0
 #define COLOR_PURPLE 10905297
 #define COLOR_PINK 16711935
+#define MAXIMUM_COL 11
 /****************       end lab4      *************/
 
 bool globals_DeadAliens[55]; //initialize all to be alive. True is dead, false is alive
