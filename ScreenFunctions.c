@@ -378,11 +378,11 @@ void write_score_to_memory(int current_score) {
 		if(score_array[i]) {
 			int offset_multiplier = 0;
 			while(i){
-				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + 5 * i + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
+				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
 				--i;
 				++offset_multiplier;
 			}
-			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + 5 * i + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
+			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
 		}
 		if(i == 0){
 			break;
@@ -446,10 +446,42 @@ void write_bottom_line_to_memory() {
 
 //End Game -----------------------------------------------------------------------------------------
 void write_game_over_to_memory(){
+	int row = 0;
+	int col = 0;
+	for (row = 0; row < Y_MAX; row++) {
+		for (col = 0; col < X_MAX; col++) {
+			if (row < Y_MAX/2) {
+				if (col < X_MAX/2) {
+					// upper left corner.
+					framePointer0[row * X_MAX + col] = BLACK;
+					//framePointer1[row * 640 + col] = GREEN;
+				} else {
+					// upper right corner.
+					framePointer0[row * X_MAX + col] = BLACK;
+					//framePointer1[row * 640 + col] = BLUE;
+				}
+			} else {
+				if (col < Y_MAX/2) {
+					// lower left corner.
+					framePointer0[row * X_MAX + col] = BLACK;
+					//framePointer1[row * 640 + col] = YELLOW;
+				} else {
+					// lower right corner.
+					framePointer0[row * X_MAX + col] = BLACK;
+					//framePointer1[row * 640 + col] = RED;
+				}
+			}
+		}
+	}//end of row for loop*/
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterG, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterA, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterM, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 5*CHAR_WIDTH + 2*5, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 6*CHAR_WIDTH + 2*6, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 7*CHAR_WIDTH + 2*7, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 8*CHAR_WIDTH + 2*8, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
 }
 
 
