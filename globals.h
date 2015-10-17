@@ -18,7 +18,6 @@
  (b15 << 19) | (b14 << 18) | (b13 << 17) | (b12 << 16) | (b11 << 15) | (b10 << 14) | (b9  << 13 ) | (b8  << 12 ) |						  \
  (b7  << 11 ) | (b6  << 10 ) | (b5  << 9 ) | (b4  << 8 ) | (b3  << 7 ) | (b2  << 6 ) | (b1  << 5 ) | (b0  << 4 ))
 
- //(b23 << 31) | (b22 << 30) | (b21 << 29) | (b20 << 28) | (b19 << 27) |
 #define packWord(b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
 (\
  (b18 << 31) | (b17 << 30) | (b16 << 29) |						  \
@@ -42,15 +41,6 @@
  (b23 << 23) | (b22 << 22) | (b21 << 21) | (b20 << 20) | (b19 << 19) | (b18 << 18) | (b17 << 17) | (b16 << 16) |						  \
  (b15 << 15) | (b14 << 14) | (b13 << 13) | (b12 << 12) | (b11 << 11) | (b10 << 10) | (b9  << 9 ) | (b8  << 8 ) |						  \
  (b7  << 7 ) | (b6  << 6 ) | (b5  << 5 ) | (b4  << 4 ) | (b3  << 3 ) | (b2  << 2 ) | (b1  << 1 ) | (b0  << 0 ) )
-
-/*#define packword48(b47,b46,b45,b44,b43,b42,b41,b40,b39,b38,b37,b36,b35,b34,b33,b32,b31,b30,b29,b28,b27,b26,b25,b24,b23,b22,b21,b20,b19,b18,b17,b16,b15,b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
-((b47 << 47) | (b46 << 46) | (b45 << 45) | (b44 << 44) | (b43 << 43) | (b42 << 42) | (b41 << 41) | (b41 << 41) | \
- (b40 << 40) | (b39 << 39) | (b38 << 38) | (b37 << 37) | (b36 << 36) | (b35 << 35) | (b34 << 34) | (b33 << 33) | (b32 << 32) | \
- (b31 << 31) | (b30 << 30) | (b29 << 29) | (b28 << 28) | (b27 << 27) | (b26 << 26) | (b25 << 25) | (b24 << 24) |						  \
- (b23 << 23) | (b22 << 22) | (b21 << 21) | (b20 << 20) | (b19 << 19) | (b18 << 18) | (b17 << 17) | (b16 << 16) |						  \
- (b15 << 15) | (b14 << 14) | (b13 << 13) | (b12 << 12) | (b11 << 11) | (b10 << 10) | (b9  << 9 ) | (b8  << 8 ) |						  \
- (b7  << 7 ) | (b6  << 6 ) | (b5  << 5 ) | (b4  << 4 ) | (b3  << 3 ) | (b2  << 2 ) | (b1  << 1 ) | (b0  << 0 ) )
-*/
 
 #define packword_tank_right(b14,b13,b12,b11,b10,b9,b8,b7,b6,b5,b4,b3,b2,b1,b0) \
 ((b14 << 31) | (b13 << 30) | (b12 << 29) |(b11 << 28) | (b10 << 27) | (b9  << 26 ) | (b8  << 25 ) |						  \
@@ -126,36 +116,39 @@
 unsigned int alienExplodeCounter;
 unsigned int score; //updated in killAliens() and killMothership()
 unsigned int lives; //updated in killTank() and when score = 1000
-unsigned short mothershipSpawnCounter;
-bool globals_mothershipState;
+unsigned short mothershipSpawnCounter; //determines when the next mothership will arrive
+bool globals_mothershipState; //dead or alive?
 bool globals_deadColumns[11]; //dead columns
-bool globals_tankDeath;
-bool beginAlienExplosion;
-bool beginMotherExplosion;
-unsigned int numberOfCol;
-unsigned int globals_alien;
-unsigned short mothershipPosition;
+bool globals_tankDeath; //tank death animation running/stopped?
+bool beginAlienExplosion; //alien explosion active?
+bool beginMotherExplosion; //mothership explosion active?
+unsigned int numberOfCol; //decrements everytime left col is destroyed
+unsigned int globals_alien; //alien chosen to die
+unsigned short mothershipPosition; //referenced by top left corner
 unsigned int offset; //used to properly access alien array after at least 1 col has been killed
-unsigned int dead_alien_count;
+unsigned int dead_alien_count; //how many aliens have been killed? Determines alien speed
 
 #define Y_MIN 30 //considered offscreen if below this for bullets. They will disappear before hitting score or lives
-#define BUNKER_OFFSET 80U
-#define BUNKER_0 BUNKER_OFFSET
-#define BUNKER_SPACE 80
-#define BUNKER_WIDTH 48
-#define BUNKER_1 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 1)
-#define BUNKER_2 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 2)
-#define BUNKER_3 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 3)
-#define BUNKER_HEIGHT 36
+#define BUNKER_OFFSET 80U //used to calculate bunker locations
+#define BUNKER_0 BUNKER_OFFSET //bunker0 location
+#define BUNKER_SPACE 80//used to calculate bunker locations
+#define BUNKER_WIDTH 48//used to calculate bunker locations
+#define BUNKER_1 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 1)//bunker1 locaiton
+#define BUNKER_2 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 2)//bunker2 location
+#define BUNKER_3 (BUNKER_OFFSET + (BUNKER_WIDTH + BUNKER_SPACE) * 3)//bunker3 locaiton
+#define BUNKER_HEIGHT 36 //height of bunkers
 #define ALIEN_SCORE 10 //score for killing an alien
 #define MOTHERSHIP_SCORE 150 //score for killing mothership
-#define running 1
+//flags
+#define running 1 
 #define stopped 0
 #define DEAD 1
 #define ALIVE 0
+//---------------------------------
 #define MOTHERSHIP_MOVEMENT 2
 #define MOTHERSHIP_WIDTH 40
 #define TOP_OF_SCREEN 32
+//colors
 #define COLOR_WHITE 16777215
 #define COLOR_YELLOW 16050970
 #define COLOR_RED 16711680
@@ -168,32 +161,35 @@ unsigned int dead_alien_count;
 /****************       end lab4      *************/
 
 bool globals_DeadAliens[55]; //initialize all to be alive. True is dead, false is alive
-bool tankBulletOffscreen;
-bool alienBlockState;
+bool tankBulletOffscreen; //true if off screen
+bool alienBlockState; //legs in or out
 
 typedef struct{
   unsigned short x;
   unsigned short y;
 } point_t;
 
+//used for alien bullets
 typedef struct{
   uint8_t type;
   point_t position;
   bool offScreen; //true if offScreen;
 } bullet_t;
 
+//regions for bunkers
 typedef struct{
   uint8_t id;//identification from 0-11
   uint8_t destruction_level;//0-4. 0 is undamaged, 4 is completely destroyed
 } quadrant;
 
+//bunkers
 typedef struct{
   quadrant quadrants[12];
 } bunker;
 
-bullet_t globals_bullets[4];
+bullet_t globals_bullets[4]; //array of alien bullets
 
-bunker globals_bunkers[4];
+bunker globals_bunkers[4];//array of bunkers
 
 void globals_setTankPosition(unsigned short val);//only care about x coordinate
 unsigned short globals_getTankPosition();

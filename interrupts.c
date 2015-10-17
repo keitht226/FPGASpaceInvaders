@@ -1,41 +1,48 @@
 #include "interrupts.h"
 
-static uint16_t timer = 1;
-static uint16_t mothershipTimer = 1;
-static bool first = true;
+#define DEATH_FOR_FASEST 34
+#define DEATH_FOR_MEDIUM 17
+#define INITIAL_TANK_POSITION 320
+#define MOTHERSHIP_EDGE_CORRECTION 6
+#define ALIEN_BULLET_MIN 75
+#define ALIEN_BULLET_MAX 200
+
+
+static uint16_t timer = 1; //general timer. Constantly running in FIT
+static uint16_t mothershipTimer = 1; //timer specifically for mothership. Helps accomodate spontaneous appearance
+static bool first = true; //help setup the FIT the first time
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
-
-
+        //is the tank explosion running? If so, do nothing else but show the animation
 	if(globals_tankDeath == running){
-		  XGpio_InterruptGlobalDisable(&gpPB);                // Turn off all PB interrupts for now.
-
-		if(first){
-			timer = 1;
-			first = false;
-		}
-	//perform tank animation-----------------------------------------------------------------------
-		if(timer < EXPLODE_TIME){//explode for two seconds
-			if(!(timer % 2))
-				write_tank_explosion1();
-			else
-				write_tank_explosion2();
-		}
-		else{
-			first = true;
-			timer = 1;
-			globals_tankDeath = stopped;
-			write_tank_black();
-			globals_setTankPosition(320);
-			write_tank_to_memory();
-			XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
-		}
+            XGpio_InterruptGlobalDisable(&gpPB); // Turn off all PB interrupts for now.
+            if(first){
+                  timer = 1;
+                  first = false;
+            }
+  //perform tank animation-----------------------------------------------------------------------
+            if(timer < EXPLODE_TIME){//explode for two seconds
+                    if(!(timer % 2))
+                            write_tank_explosion1();
+                    else
+                            write_tank_explosion2();
+            }
+            else{
+                    first = true;
+                    timer = 1;
+                    globals_tankDeath = stopped;
+                    write_tank_black();
+                    globals_setTankPosition(INITIAL_TANK_POSITION);
+                    write_tank_to_memory();
+                    XGpio_InterruptGlobalEnable(&gpPB);                 // Re-enable PB interrupts.
+            }
 	}
+        //tank death animation isn't happening. Do other stuff
 	else{
 
 	    u32 currentButtonState = XGpio_DiscreteRead(&gpPB, 1);  // Get the current state of the buttons.
-	    // You need to do something here.
+	    // allow user to use buttons, even multiple at once. All three at once don't move the tank but do shoot a bullet
 	    if(!(timer % TANK_SPEED)){
 			switch(currentButtonState){
 			  case 8:
@@ -67,15 +74,18 @@ void timer_interrupt_handler(){
 	  srand(timer);
 
 	//move alien block----------------------------------------------------------------------------
-	  if(dead_alien_count > 34){
+        //if large amount of aliens are dead, move at fastest rate
+	  if(dead_alien_count > DEATH_FOR_FASEST){
 		  if(!(timer%ALIEN_SPEED3)){
 			  moveAlienBlock();
 		  }
 	  }
-	  else if(dead_alien_count > 17){
+          //if medium amount dead, move at medium speed
+	  else if(dead_alien_count > DEATH_FOR_MEDIUM){
 		  if(!(timer%ALIEN_SPEED2)){
 			  moveAlienBlock();
 		  }
+          //otherwise move at slowest rate
 	  }else{
 		  if(!(timer%ALIEN_SPEED1)){
 			  moveAlienBlock();
@@ -85,51 +95,55 @@ void timer_interrupt_handler(){
 
 	//if mothership is present, move mothership-----------------------------------------------------
 	  if(globals_mothershipState == ALIVE && !(timer % MOTHERSHIP_SPEED)){
+                //assign new position for mothership
 		mothershipPosition += MOTHERSHIP_MOVEMENT;
-		xil_printf("mothership position: %d\n\r",mothershipPosition);
-		if(mothershipPosition + MOTHERSHIP_WIDTH >= X_MAX-6){
-			mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
-			globals_mothershipState = DEAD;
-			mothershipPosition = 0;
-			xil_printf("mothership position: %d\n\r",mothershipPosition);
-			write_mothership_black_to_memory();
+                //mothership at the edge? 
+		if(mothershipPosition + MOTHERSHIP_WIDTH >= X_MAX-MOTHERSHIP_EDGE_CORRECTION){
+			mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;//create a new spawn timer
+			globals_mothershipState = DEAD; //erase mothership
+			mothershipPosition = 0; //reset mothership position
+			write_mothership_black_to_memory(); 
 		}
 		else
-			write_mothership_to_memory();
+			write_mothership_to_memory(); //if not at edge, move the ship on screen
 	  }
 
 
 	//draw mothership if mothershipSpawnCounter reached---------------------------------------------
 	  if(!(mothershipTimer % mothershipSpawnCounter)){
-		globals_mothershipState = ALIVE;
+		globals_mothershipState = ALIVE; //set ship to alive
 		mothershipTimer = 1;//initialize/reset timer
-		write_mothership_to_memory();
+		write_mothership_to_memory(); //draw on screen
 	  }
 
 	//stall deleting alien long enough to see explosion---------------------------------------------
 	  if(beginAlienExplosion){
+                  //stall till explosion done
 		  if(alienExplodeCounter < ALIEN_EXPLODE_TIME){
 			  ++alienExplodeCounter;
 		  }
 		  if(alienExplodeCounter == ALIEN_EXPLODE_TIME){
-			  write_alien_dead_to_memory(globals_alien);
-			  alienExplodeCounter = 1;
-			  beginAlienExplosion = false;
+			  write_alien_dead_to_memory(globals_alien); //erase explosion
+			  alienExplodeCounter = 1; //reset timer
+			  beginAlienExplosion = false; //end delay
 		  }
 	  }
 
 //killed mother ship stuff-------------------------------------------------------------------------
 	  if(beginMotherExplosion){
+                  //draw 150 in place of mothership
 		  write_mothership_hit_score_to_memory();
+                  //delay long enough for user to see
 		  if(alienExplodeCounter < ALIEN_EXPLODE_TIME){
 			  ++alienExplodeCounter;
 		  }
+                  //delay limit reached
 		  if(alienExplodeCounter == ALIEN_EXPLODE_TIME){
-			  write_mothership_black_to_memory();
-			  alienExplodeCounter = 1;
-			  beginMotherExplosion = false;
-			  mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
-			  mothershipPosition = 0;
+			  write_mothership_black_to_memory(); //erase score
+			  alienExplodeCounter = 1; //reset counter
+			  beginMotherExplosion = false; //no longer exploding
+			  mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;//make new spawn counter
+			  mothershipPosition = 0;//reset position
 		  }
 	  }
 
@@ -140,8 +154,8 @@ void timer_interrupt_handler(){
 
 
 	//create new alien bullet-----------------------------------------------------------------------
-	  if(!(timer % (rand()%(200+1-75)+75))){//new alien bullet from 2-5 seconds
-		 //newAlienBullet();
+	  if(!(timer % (rand()%(ALIEN_BULLET_MAX+1-ALIEN_BULLET_MIN)+ALIEN_BULLET_MIN))){//new alien bullet from 2-5 seconds
+		 newAlienBullet();
 	  }
 
 	//inc mothership timer. Cannot overflow under correct operation---------------------------------

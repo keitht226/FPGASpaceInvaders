@@ -1,11 +1,12 @@
 #include "globals.h"
 
-//static global makes local to this file. Other files can only access variables through functions
 static unsigned short tankPosition;
 static point_t tankBulletPosition;
 static point_t AlienBlockPosition;
-bool globals_DeadAliens[55] = {false}; //initialize all to be alive. True is dead, false is alive
-bool globals_deadColumns[11] = {ALIVE}; //initialize all columns to be alive
+
+//initialize variables------------------------------------
+bool globals_DeadAliens[55] = {false}; 
+bool globals_deadColumns[11] = {ALIVE}; 
 bool globals_tankDeath = stopped;
 bool tankBulletOffscreen = true;
 bool alienBlockState = LEGS_IN;
@@ -15,7 +16,7 @@ unsigned short mothershipPosition = 0;
 unsigned int dead_alien_count = 0;
 unsigned int score = 0;
 unsigned int lives = 3;
-unsigned short mothershipSpawnCounter = 1000;//mothership appears first time after 10 seconds. All following is random
+unsigned short mothershipSpawnCounter = 1000;
 unsigned int alienExplodeCounter = 1;
 unsigned int numberOfCol = 11;
 bool mothershipState = DEAD;
@@ -65,10 +66,10 @@ const int BLACK = 0;
 const int PURPLE = 10905297;
 const int PINK = 16711935;
 
+//end initialization-------------------------------------------------------
 
 void globals_setTankPosition(unsigned short val){
   tankPosition = val;
-  //xil_printf("Setting Tank Position: %d\n\r", tankPosition);
 }
 
 unsigned short globals_getTankPosition(){
@@ -78,7 +79,6 @@ unsigned short globals_getTankPosition(){
 void globals_setTankBulletPosition(point_t val){
   tankBulletPosition.x = val.x;
   tankBulletPosition.y = val.y;
-  //xil_printf("Setting bullet x = %d, y = %d\n\r", val.x, val.y);
 }
 
 point_t globals_getTankBulletPosition(){
@@ -88,7 +88,6 @@ point_t globals_getTankBulletPosition(){
 void globals_setAlienBlockPosition(point_t val){
   AlienBlockPosition.x = val.x;
   AlienBlockPosition.y = val.y;
- // xil_printf("Setting Alien x = %d, y = %d\n\r", val.x, val.y);
 }
 
 point_t globals_getAlienBlockPosition(){
@@ -104,6 +103,7 @@ point_t globals_getAlienBulletPosition(uint8_t index){
   return globals_bullets[index].position;
 }
 
+//get position of specific alien based on changing number of columns
 point_t globals_getAlienPosition(uint8_t alien){
   point_t alienPosition;
   int col = alien % 11 - offset;
