@@ -5,7 +5,7 @@ static unsigned short tankPosition;
 static point_t tankBulletPosition;
 static point_t AlienBlockPosition;
 bool globals_DeadAliens[55] = {false}; //initialize all to be alive. True is dead, false is alive
-bool globals_deadColumns[10] = {ALIVE}; //initialize all columns to be alive
+bool globals_deadColumns[11] = {ALIVE}; //initialize all columns to be alive
 bool globals_tankDeath = stopped;
 bool tankBulletOffscreen = true;
 bool alienBlockState = LEGS_IN;

@@ -108,6 +108,7 @@ void killAlien(unsigned short x, unsigned short y){
   }
   if(newDeadCol){
 	  globals_deadColumns[col+offset] = DEAD; //set col to dead according to ORIGINAL arrangement
+	  //globals_tankDeath = false;
 	  if(globals_deadColumns[offset] == DEAD){
 	    numberOfCol--;
 	    point_t alienBlockLocation= globals_getAlienBlockPosition();

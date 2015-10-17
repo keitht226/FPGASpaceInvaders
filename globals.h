@@ -128,7 +128,7 @@ unsigned int score; //updated in killAliens() and killMothership()
 unsigned int lives; //updated in killTank() and when score = 1000
 unsigned short mothershipSpawnCounter;
 bool globals_mothershipState;
-bool globals_deadColumns[10]; //dead columns 
+bool globals_deadColumns[11]; //dead columns
 bool globals_tankDeath;
 bool beginAlienExplosion;
 unsigned int numberOfCol;
