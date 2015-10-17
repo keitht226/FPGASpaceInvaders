@@ -368,6 +368,7 @@ void killMothership(){
   write_score_to_memory(score);
   //assign new random spawn value for mothership
   mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
+  mothershipPosition = 0;
   globals_mothershipState = DEAD;
   return;/*}}}*/
 }
