@@ -94,7 +94,7 @@
 //macros for proper positioning
 #define SCORE_ROW_OFFSET 10
 #define SCORE_COL_OFFSET 20
-#define SCORE_NUM_COL_OFFSET 110
+#define SCORE_NUM_COL_OFFSET 160
 #define LIVES_ROW_OFFSET 10
 #define LIVES_WORD_COL_OFFSET 340
 #define LIVES_COL_OFFSET 450

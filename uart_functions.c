@@ -67,21 +67,26 @@ void moveAlienBlock(){
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x -= BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//the block did not just move down. Can do so next time
-    blockMovingRight = false; //change direction
+    blockMovingRight = false;
+    globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
+    write_dead_aliens_to_memory();
+
   }
   //move down if all the way at left of screen and change direction. This takes into account lost columns
   else if(alienBlockLocation.x < STOP_DISTANCE && !lowered && !blockMovingRight){
     alienBlockLocation.y += BLOCK_MOVEMENT_Y;
     alienBlockLocation.x += BLOCK_MOVEMENT_X;//don't move horizontally
     lowered = true;//block just moved down. Next move must be to the side
-    blockMovingRight = true; //change direction
+    blockMovingRight = true;
+    globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
+    write_dead_aliens_to_memory();
   }
   else{
+	globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
     lowered = false;//the block did not just move down. Can do so next time
   }
-  globals_setAlienBlockPosition(alienBlockLocation);//update horizontal position
-  alienBlockState = !alienBlockState; //change alien leg position
-  write_alien_block_to_memory(); //redraw aliens
+  alienBlockState = !alienBlockState;
+  write_alien_block_to_memory();
   return;/*}}}*/
 }
 
@@ -132,7 +137,7 @@ void killAlien(unsigned short x, unsigned short y){
   if(row == 0){
 	  score += TOP_ALIEN_SCORE;
   }else if(row <= 2){
-	  score += MIDDLE_ALIEN_SCORE;
+	  score += MID_ALIEN_SCORE;
   }else
 	  score += LOW_ALIEN_SCORE;
   write_score_to_memory(score);
