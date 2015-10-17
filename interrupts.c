@@ -101,8 +101,8 @@ void timer_interrupt_handler(){
 		if(mothershipPosition + MOTHERSHIP_WIDTH >= X_MAX-MOTHERSHIP_EDGE_CORRECTION){
 			mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;//create a new spawn timer
 			globals_mothershipState = DEAD; //erase mothership
+			write_mothership_black_to_memory();
 			mothershipPosition = 0; //reset mothership position
-			write_mothership_black_to_memory(); 
 		}
 		else
 			write_mothership_to_memory(); //if not at edge, move the ship on screen
