@@ -10,6 +10,7 @@ bool globals_tankDeath = stopped;
 bool tankBulletOffscreen = true;
 bool alienBlockState = LEGS_IN;
 bool beginAlienExplosion = false;
+bool beginMotherExplosion = false;
 unsigned short mothershipPosition = 0;
 unsigned int dead_alien_count = 0;
 unsigned int score = 0;

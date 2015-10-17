@@ -16,21 +16,21 @@ void init_monitor() {
 			if (row < Y_MAX/2) {
 				if (col < X_MAX/2) {
 					// upper left corner.
-					framePointer0[row * X_MAX + col] = GREEN;
+					framePointer0[row * X_MAX + col] = BLACK;
 					//framePointer1[row * 640 + col] = GREEN;
 				} else {
 					// upper right corner.
-					framePointer0[row * X_MAX + col] = GREEN;
+					framePointer0[row * X_MAX + col] = BLACK;
 					//framePointer1[row * 640 + col] = BLUE;
 				}
 			} else {
 				if (col < Y_MAX/2) {
 					// lower left corner.
-					framePointer0[row * X_MAX + col] = BLUE;
+					framePointer0[row * X_MAX + col] = BLACK;
 					//framePointer1[row * 640 + col] = YELLOW;
 				} else {
 					// lower right corner.
-					framePointer0[row * X_MAX + col] = BLUE;
+					framePointer0[row * X_MAX + col] = BLACK;
 					//framePointer1[row * 640 + col] = RED;
 				}
 			}
@@ -246,7 +246,7 @@ void write_mothership_to_memory() {
 void write_mothership_hit_score_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
-	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_score, WHITE);
+	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, BIT_32, mothership_score, WHITE);
 	//write_pixel_array(row_offset, col_offset - BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, WHITE);
 
 }
@@ -254,7 +254,7 @@ void write_mothership_hit_score_to_memory() {
 void write_mothership_black_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
-	write_pixel_array(row_offset, col_offset + BIT_32, MOTHERSHIP_ROW, BIT_32, mothership_black, GREEN);
+	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, BIT_32, mothership_black, BLACK);
 
 }
 

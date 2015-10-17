@@ -362,13 +362,11 @@ void killTank(){
 
 void killMothership(){
   /*{{{*/
-  write_mothership_hit_score_to_memory();
-  write_mothership_black_to_memory();
+  beginMotherExplosion = true;
   score += MOTHERSHIP_SCORE;
   write_score_to_memory(score);
   //assign new random spawn value for mothership
-  mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
-  mothershipPosition = 0;
+
   globals_mothershipState = DEAD;
   return;/*}}}*/
 }

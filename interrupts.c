@@ -47,6 +47,17 @@ void timer_interrupt_handler(){
 			  case 2:
 				moveTankRight();
 				break;
+			  case 9:
+				moveTankLeft();
+				newTankBullet();
+				break;
+			  case 3:
+				moveTankRight();
+				newTankBullet();
+				break;
+			  case 11:
+				newTankBullet();
+				break;
 			  default:
 				break;
 			}
@@ -107,6 +118,20 @@ void timer_interrupt_handler(){
 		  }
 	  }
 
+//killed mother ship stuff-------------------------------------------------------------------------
+	  if(beginMotherExplosion){
+		  write_mothership_hit_score_to_memory();
+		  if(alienExplodeCounter < ALIEN_EXPLODE_TIME){
+			  ++alienExplodeCounter;
+		  }
+		  if(alienExplodeCounter == ALIEN_EXPLODE_TIME){
+			  write_mothership_black_to_memory();
+			  alienExplodeCounter = 1;
+			  beginMotherExplosion = false;
+			  mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
+			  mothershipPosition = 0;
+		  }
+	  }
 
 	//update bullets--------------------------------------------------------------------------------
 	  if(!(timer % BULLET_SPEED)){

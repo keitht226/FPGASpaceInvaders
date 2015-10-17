@@ -131,6 +131,7 @@ bool globals_mothershipState;
 bool globals_deadColumns[11]; //dead columns
 bool globals_tankDeath;
 bool beginAlienExplosion;
+bool beginMotherExplosion;
 unsigned int numberOfCol;
 unsigned int globals_alien;
 unsigned short mothershipPosition;
