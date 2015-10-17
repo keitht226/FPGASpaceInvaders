@@ -317,6 +317,10 @@ void erodeBunker(unsigned short x, unsigned short y){
 void killTank(){
 /*{{{*/
   int i;
+  if(lives == 1){
+      write_game_over_to_memory();
+      exit(0);
+  }
   --lives;
   write_lives_to_memory();  
   globals_tankDeath = running;

@@ -359,7 +359,7 @@ void write_alien_bullets_to_memory() {
 
 
 
-//Score, Lives, Bottom Line ---------------------------------------------
+//Score -------------------------------------------------------------------------
 void write_score_to_memory(int current_score) {
 	int score_array[MAX_SCORE_SIZE];
 
@@ -378,11 +378,11 @@ void write_score_to_memory(int current_score) {
 		if(score_array[i]) {
 			int offset_multiplier = 0;
 			while(i){
-				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
+				write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + 5 * i + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[i]), YELLOW);
 				--i;
 				++offset_multiplier;
 			}
-			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
+			write_pixel_array(SCORE_ROW_OFFSET, SCORE_NUM_COL_OFFSET + 50 + 5 * i + (CHAR_WIDTH * offset_multiplier), CHAR_HEIGHT, CHAR_WIDTH, get_int_bitmap(score_array[0]), YELLOW);
 		}
 		if(i == 0){
 			break;
@@ -391,15 +391,19 @@ void write_score_to_memory(int current_score) {
 	}
 }
 
+
+
 void write_score_word_to_memory() {
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterS, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterC, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterO, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterR, PURPLE);
 	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
-	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 10 +6*CHAR_WIDTH + 2*10, CHAR_HEIGHT, CHAR_WIDTH, num0, YELLOW);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 10 + 6*CHAR_WIDTH + 2*10, CHAR_HEIGHT, CHAR_WIDTH, num0, YELLOW);
 }
 
+
+//Lives -----------------------------------------------------------------------------------------
 void write_lives_to_memory() {
 	int i;
 	//Write each of the lives left
@@ -425,6 +429,8 @@ void write_lives_word_to_memory() {
 	write_pixel_array(SCORE_ROW_OFFSET, LIVES_WORD_COL_OFFSET + 4*CHAR_WIDTH + 2*4, CHAR_HEIGHT, CHAR_WIDTH, letterS, PURPLE);
 }
 
+
+//Bottom Line -----------------------------------------------------------------------------------------
 void write_bottom_line_to_memory() {
 	int row;
 	int col;
@@ -436,6 +442,18 @@ void write_bottom_line_to_memory() {
 		}
 	}
 }
+
+
+//End Game -----------------------------------------------------------------------------------------
+void write_game_over_to_memory(){
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET, CHAR_HEIGHT, CHAR_WIDTH, letterG, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + CHAR_WIDTH + 2, CHAR_HEIGHT, CHAR_WIDTH, letterA, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 2*CHAR_WIDTH + 2*2, CHAR_HEIGHT, CHAR_WIDTH, letterM, PURPLE);
+	write_pixel_array(SCORE_ROW_OFFSET, SCORE_COL_OFFSET + 3*CHAR_WIDTH + 2*3, CHAR_HEIGHT, CHAR_WIDTH, letterE, PURPLE);
+}
+
+
+
 
 int const* get_int_bitmap(int i) {
 	switch(i) {
