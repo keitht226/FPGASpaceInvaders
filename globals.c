@@ -10,6 +10,7 @@ bool globals_tankDeath = stopped;
 bool tankBulletOffscreen = true;
 bool alienBlockState = LEGS_IN;
 bool beginAlienExplosion = false;
+unsigned short mothershipPosition = 0;
 unsigned int dead_alien_count = 0;
 unsigned int score = 0;
 unsigned int lives = 3;
@@ -19,7 +20,7 @@ unsigned int numberOfCol = 11;
 bool mothershipState = DEAD;
 unsigned int offset = 0;
 
-const int ALIEN_START = 50;
+const int ALIEN_START = 60;
 const int ROWS_OF_ALIENS = 5;
 const int COLUMNS_OF_ALIENS = 11;
 const int TOP_ROW_ALIENS_EXTRA_PIXELS = 8;
@@ -50,7 +51,7 @@ const int ALIEN_BULLET_COL = 6;
 const int GROUND_OFFSET = 455;
 const int BIT_32 = 32;
 const int MAX_SCORE_SIZE = 6;
-const int MOTHERSHIP_ROW_OFFSET = 50;
+const int MOTHERSHIP_ROW_OFFSET = 35;
 const int MOTHERSHIP_ROW = 14;
 const int MOTHERSHIP_COL = 20;
 
@@ -134,20 +135,20 @@ packword_mothership_left(0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0)
 
 const int mothership_right[14] =
 {
-  packword_mothership_right(1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-  packword_mothership_right(1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
-  packword_mothership_right(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0),
-  packword_mothership_right(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0),
-  packword_mothership_right(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
-  packword_mothership_right(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
-  packword_mothership_right(1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0),
-  packword_mothership_right(1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0),
-  packword_mothership_right(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0),
-  packword_mothership_right(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0),
-  packword_mothership_right(1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
-  packword_mothership_right(1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
-  packword_mothership_right(0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0),
-  packword_mothership_right(0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0)
+packword_mothership_right(1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+packword_mothership_right(1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+packword_mothership_right(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0),
+packword_mothership_right(1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0),
+packword_mothership_right(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
+packword_mothership_right(1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
+packword_mothership_right(1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0),
+packword_mothership_right(1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0,0,0),
+packword_mothership_right(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0),
+packword_mothership_right(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0),
+packword_mothership_right(1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
+packword_mothership_right(1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0),
+packword_mothership_right(0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0),
+packword_mothership_right(0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0)
 };
 
 const int mothership_black[14] =

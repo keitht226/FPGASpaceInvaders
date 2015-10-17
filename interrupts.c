@@ -75,11 +75,12 @@ void timer_interrupt_handler(){
 	//if mothership is present, move mothership-----------------------------------------------------
 	  if(globals_mothershipState == ALIVE && !(timer % MOTHERSHIP_SPEED)){
 		mothershipPosition += MOTHERSHIP_MOVEMENT;
-		if(mothershipPosition > X_MAX){
+		if(mothershipPosition + MOTHERSHIP_WIDTH >= X_MAX-1){
 			globals_mothershipState = DEAD;
 			write_mothership_black_to_memory();
 		}
-		write_mothership_to_memory();
+		else
+			write_mothership_to_memory();
 	  }
 
 
@@ -111,7 +112,7 @@ void timer_interrupt_handler(){
 
 	//create new alien bullet-----------------------------------------------------------------------
 	  if(!(timer % (rand()%(200+1-75)+75))){//new alien bullet from 2-5 seconds
-		 newAlienBullet();
+		 //newAlienBullet();
 	  }
 
 	//inc mothership timer. Cannot overflow under correct operation---------------------------------

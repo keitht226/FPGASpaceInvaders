@@ -207,12 +207,10 @@ void newAlienBullet(){
 */
 
 void updateBullets(){
-  static enum {MOTHERSHIP,ALIEN,BUNKER,CONTINUE} action;
-  action = CONTINUE;
   //move all alien bullets down/*{{{*/
+  int temp;
   int i,j = 0;
   int color[6];
-  int tankColor[4];
   for(i = 0; i<4;i++){//iterate through alien bullet array
     //only update position if bullet is onscreen
     if(globals_bullets[i].offScreen == false){
@@ -238,47 +236,51 @@ void updateBullets(){
 	  point_t tankBullet = globals_getTankBulletPosition();
 	  tankBullet.y -= BULLET_MOVEMENT_DISTANCE;
 	  globals_setTankBulletPosition(tankBullet);
-	  if(tankBullet.y <= TOP_OF_SCREEN){//offscreen
-		  tankBulletOffscreen = true;
-	  }else{
-		  for(i = 1; i < 3; ++i){//only pixels 2 and 3 in the tank bullet are white
-			  tankColor[i] = get_pixel_color(tankBullet.x+i, tankBullet.y);
-			  if(tankColor[i] != BLACK){
-				tankBulletOffscreen = true;
-				if(tankColor[i] == GREEN){
-					//erodeBunker(tankBullet.x+i,tankBullet.y);
-					action = BUNKER;
-					break;
-				}
-				if(tankColor[i] == RED){
-					action = MOTHERSHIP;
-					//killMothership();
-					break;
-				}
-				if(tankColor[i] == WHITE){
-					action = ALIEN;
-					//killAlien(tankBullet.x+i,tankBullet.y);
-					break;
-				}
-			  }
+	  for(i = 1; i < 3; ++i){//only pixels 2 and 3 in the tank bullet are white
+
+		  temp = get_pixel_color(tankBullet.x+i, tankBullet.y);
+		  if(temp != BLACK){
+			  break;
 		  }
+//		  if(tankColor[i] != BLACK){
+//			tankBulletOffscreen = true;
+//			if(tankColor[i] == GREEN){
+//				erodeBunker(tankBullet.x+i,tankBullet.y);
+//				break;
+//			}
+//			if(tankColor[i] == RED){
+//				killMothership();
+//				break;
+//			}
+//			if(tankColor[i] == WHITE){
+//				killAlien(tankBullet.x+i,tankBullet.y);
+//				break;
+//			}
+//		  }
 	  }
-	  write_tank_bullet_to_memory();
-	  switch(action){
-		  case BUNKER:
+	  if(temp != BLACK ){
+		  tankBulletOffscreen = true;
+		  write_tank_bullet_to_memory();
+		  switch(temp){
+		  case COLOR_GREEN:
 			  erodeBunker(tankBullet.x+i,tankBullet.y);
 			  break;
-		  case MOTHERSHIP:
-			  killMothership();
-			  break;
-		  case ALIEN:
+		  case COLOR_WHITE:
 			  killAlien(tankBullet.x+i,tankBullet.y);
 			  break;
-		  case CONTINUE:
+		  case COLOR_RED:
+			  killMothership();
 			  break;
 		  default:
 			  break;
 		  }
+	  }
+	  else if(tankBullet.y <= TOP_OF_SCREEN){//offscreen
+		  tankBulletOffscreen = true;
+		  write_tank_bullet_to_memory();
+	  }else{
+		  write_tank_bullet_to_memory();
+	  }
   }
 
   return;/*}}}*/

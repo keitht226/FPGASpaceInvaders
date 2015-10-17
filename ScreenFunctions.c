@@ -16,21 +16,21 @@ void init_monitor() {
 			if (row < Y_MAX/2) {
 				if (col < X_MAX/2) {
 					// upper left corner.
-					framePointer0[row * X_MAX + col] = BLACK;
+					framePointer0[row * X_MAX + col] = GREEN;
 					//framePointer1[row * 640 + col] = GREEN;
 				} else {
 					// upper right corner.
-					framePointer0[row * X_MAX + col] = BLACK;
+					framePointer0[row * X_MAX + col] = GREEN;
 					//framePointer1[row * 640 + col] = BLUE;
 				}
 			} else {
 				if (col < Y_MAX/2) {
 					// lower left corner.
-					framePointer0[row * X_MAX + col] = BLACK;
+					framePointer0[row * X_MAX + col] = BLUE;
 					//framePointer1[row * 640 + col] = YELLOW;
 				} else {
 					// lower right corner.
-					framePointer0[row * X_MAX + col] = BLACK;
+					framePointer0[row * X_MAX + col] = BLUE;
 					//framePointer1[row * 640 + col] = RED;
 				}
 			}
@@ -238,8 +238,8 @@ void write_tank_black() {
 void write_mothership_to_memory() {
 	int row_offset = MOTHERSHIP_ROW_OFFSET;
 	int col_offset = (int) mothershipPosition;
-	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_left, RED);
-	//write_pixel_array(row_offset, col_offset + BIT_32, MOTHERSHIP_ROW, MOTHERSHIP_COL, mothership_right, RED);
+	write_pixel_array(row_offset, col_offset, MOTHERSHIP_ROW, MOTHERSHIP_COL + 12, mothership_left, RED);
+	write_pixel_array(row_offset, col_offset + BIT_32, MOTHERSHIP_ROW + 15, MOTHERSHIP_COL, mothership_right, RED);
 
 }
 
@@ -299,7 +299,7 @@ void write_an_erosion_to_memory(int bunker, int quadrant){
 	else{
 		write_pixel_array(erosion_row_offset, erosion_col_offset, EROSION_ROWCOL, EROSION_ROWCOL, get_erosion_bitmap(quadrant, level), GREEN);
 	}
-
+	xil_printf("eroded a bunker\n\r");
 }
 
 //Tank Bullets -------------------------------------------------------------
@@ -310,6 +310,7 @@ void write_tank_bullet_to_memory() {
 	}
 	else {
 		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBulletBlack, BLACK);
+		xil_printf("printed a black bullet at x: %d y: %d\n\r",position.x,position.y);
 	}
 }
 

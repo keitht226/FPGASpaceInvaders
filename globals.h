@@ -153,8 +153,16 @@ unsigned int dead_alien_count;
 #define DEAD 1
 #define ALIVE 0
 #define MOTHERSHIP_MOVEMENT 2
+#define MOTHERSHIP_WIDTH 40
 #define TOP_OF_SCREEN 32
-
+#define COLOR_WHITE 16777215
+#define COLOR_YELLOW 16050970
+#define COLOR_RED 16711680
+#define COLOR_GREEN 65280
+#define COLOR_BLUE 255
+#define COLOR_BLACK 0
+#define COLOR_PURPLE 10905297
+#define COLOR_PINK 16711935
 /****************       end lab4      *************/
 
 bool globals_DeadAliens[55]; //initialize all to be alive. True is dead, false is alive
