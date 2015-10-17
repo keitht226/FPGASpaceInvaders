@@ -291,7 +291,7 @@ void write_an_erosion_to_memory(int bunker, int quadrant){
 void write_tank_bullet_to_memory() {
 	point_t position = globals_getTankBulletPosition();
 	if(!tankBulletOffscreen) {
-		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBullet_4x18, YELLOW);
+		write_pixel_array(position.y, position.x, 14, TANK_BULLET_COL, tankBullet_4x18, YELLOW);
 	}
 	else {
 		write_pixel_array(position.y, position.x, TANK_BULLET_ROW, TANK_BULLET_COL, tankBulletBlack, BLACK);
