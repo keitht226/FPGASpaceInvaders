@@ -75,8 +75,12 @@ void timer_interrupt_handler(){
 	//if mothership is present, move mothership-----------------------------------------------------
 	  if(globals_mothershipState == ALIVE && !(timer % MOTHERSHIP_SPEED)){
 		mothershipPosition += MOTHERSHIP_MOVEMENT;
-		if(mothershipPosition + MOTHERSHIP_WIDTH >= X_MAX-1){
+		xil_printf("mothership position: %d\n\r",mothershipPosition);
+		if(mothershipPosition + MOTHERSHIP_WIDTH >= X_MAX-6){
+			mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;
 			globals_mothershipState = DEAD;
+			mothershipPosition = 0;
+			xil_printf("mothership position: %d\n\r",mothershipPosition);
 			write_mothership_black_to_memory();
 		}
 		else
@@ -85,7 +89,7 @@ void timer_interrupt_handler(){
 
 
 	//draw mothership if mothershipSpawnCounter reached---------------------------------------------
-	  if(!(timer % mothershipSpawnCounter)){
+	  if(!(mothershipTimer % mothershipSpawnCounter)){
 		globals_mothershipState = ALIVE;
 		mothershipTimer = 1;//initialize/reset timer
 		write_mothership_to_memory();

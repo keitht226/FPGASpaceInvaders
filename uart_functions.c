@@ -122,7 +122,12 @@ void killAlien(unsigned short x, unsigned short y){
   }
   beginAlienExplosion = true;
   write_explosion_to_memory(globals_alien);
-  score += ALIEN_SCORE;
+  if(row == 0){
+	  score += 40;
+  }else if(row <= 2){
+	  score += 20;
+  }else
+	  score += 10;
   write_score_to_memory(score);
   return;/*}}}*/
 }
