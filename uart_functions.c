@@ -236,23 +236,19 @@ void updateBullets(){
       globals_bullets[i].position.y += BULLET_MOVEMENT_DISTANCE;//preemptively grab new position
       if(globals_bullets[i].position.y > GROUND_OFFSET-1){
         globals_bullets[i].offScreen = true;
-        write_alien_bullets_to_memory();
       }else{
           for(j = 0; j < ALIEN_BULLET_PIXELS; j++){//check all six pixels of alien bullet for collision
             temp = get_pixel_color(globals_bullets[i].position.x+j,(globals_bullets[i].position.y + HEIGHT_OF_ALIEN_BULLET));
             if(temp == GREEN){//hit tank or bunker
-              globals_bullets[i].offScreen = true;
-              write_alien_bullets_to_memory();
               //did the bullet hit our tank or a bunker? Call the correct function
               (globals_bullets[i].position.y > (BUNKER_HALF_ROW + BUNKER_ROW_OFFSET)) ? killTank() : erodeBunker(globals_bullets[i].position.x+j,globals_bullets[i].position.y+HEIGHT_OF_ALIEN_BULLET + ALIEN_BULLET_PIXELS);
+              globals_bullets[i].offScreen = true;
               break;
             }
           }
       }
     }
-    else{
-      write_alien_bullets_to_memory();
-    }
+    write_alien_bullets_to_memory();
   }
 
   //move tank bullets up if a bullet is onscreen
