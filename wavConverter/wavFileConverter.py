@@ -50,9 +50,9 @@ class wavFileConverter:
 			#every 10 numbers insert a newline
 			if((i % 10) == 0):
 				f.write('\n')
-			f.write(str(temp[0]) + ',' + str(temp[1]))
+			f.write(str(temp[0]) + ',' + str(temp[1]) + ',')
 		#remove last comma
-		f.seek(-2, os.SEEK_END)
+		f.seek(-1, os.SEEK_END)
 		f.truncate()
 
 		f.write('};')
