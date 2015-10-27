@@ -1,6 +1,7 @@
 import argparse
 import os
 import wave
+import struct
 
 
 """wavFileConverter filename.wav whatToCallTheSound"""
@@ -37,16 +38,19 @@ class wavFileConverter:
 		self.num_samples = w.getnframes()
 
 		#write to file
-		f = open(self.var_name + 'File.c', 'w')
+		f = open(self.var_name + 'File.c', 'wb')
 		f.write('int ' + str(self.var_name) + '_sample_rate = ' + str(self.sample_rate) + ';\n')
 		f.write('int ' + str(self.var_name) + '_num_samples = ' + str(self.num_samples) + ';\n')
 		f.write('int ' + str(self.var_name) + '_array[] = {\n')
 		print self.sample_rate, self.num_samples
-		#get frames
-		for i in range(0,10):
+		#get and write frames
+		for i in range(0, self.num_samples):
 			frame = w.readframes(1)
-			print frame
-			#f.write(',' + str(frame))
+			temp = struct.unpack("<2B", frame)
+			f.write(str(temp[0]), + ',' + str(temp[1]))
+		#remove last comma
+    	f.seek(-1, os.SEEK_END)
+    	f.truncate()
 
 		f.write('};')
 
@@ -58,4 +62,3 @@ if __name__ == '__main__':
 	converter.parse_arguments()
 	#start conversion
 	converter.parse_file()
-	#converter.convert()
