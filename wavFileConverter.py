@@ -20,8 +20,8 @@ class wavFileConverter:
 		"""Parse Command line arguments"""
 		#setup parser
 		parser = argparse.ArgumentParser()
-		parser.add_argument('fileName', type = int, action = 'store')
-		parser.add_argument('varName',type = int, action = 'store')
+		parser.add_argument('fileName', type = str, action = 'store')
+		parser.add_argument('varName',type = str, action = 'store')
 
 		#parse arguments
 		args = parser.parse_args()
@@ -31,12 +31,24 @@ class wavFileConverter:
 
 	def parse_file(self):
 		"""Parse .wav file"""
-		w = wave.open(self.file_name, 'r')
+		#open wave file
+		w = wave.open(self.file_name, 'rb')
 		self.sample_rate = w.getframerate()
 		self.num_samples = w.getnframes()
-		#for i in range(0,self.num_samples)
-			#frame = w.readframes(i)
-			#print frame
+
+		#write to file
+		f = open(self.var_name + 'File.c', 'w')
+		f.write('int ' + str(self.var_name) + '_sample_rate = ' + str(self.sample_rate) + ';\n')
+		f.write('int ' + str(self.var_name) + '_num_samples = ' + str(self.num_samples) + ';\n')
+		f.write('int ' + str(self.var_name) + '_array[] = {\n')
+		print self.sample_rate, self.num_samples
+		#get frames
+		for i in range(0,10):
+			frame = w.readframes(1)
+			print frame
+			#f.write(',' + str(frame))
+
+		f.write('};')
 
 
 if __name__ == '__main__':
@@ -45,4 +57,5 @@ if __name__ == '__main__':
 	#parse arguments
 	converter.parse_arguments()
 	#start conversion
-	converter.convert()
+	converter.parse_file()
+	#converter.convert()
