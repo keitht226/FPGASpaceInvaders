@@ -47,10 +47,13 @@ class wavFileConverter:
 		for i in range(0, self.num_samples):
 			frame = w.readframes(1)
 			temp = struct.unpack("<2B", frame)
-			f.write(str(temp[0]), + ',' + str(temp[1]))
+			#every 10 numbers insert a newline
+			if((i % 10) == 0):
+				f.write('\n')
+			f.write(str(temp[0]) + ',' + str(temp[1]))
 		#remove last comma
-    	f.seek(-1, os.SEEK_END)
-    	f.truncate()
+		f.seek(-2, os.SEEK_END)
+		f.truncate()
 
 		f.write('};')
 
