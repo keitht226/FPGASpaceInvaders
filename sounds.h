@@ -10,6 +10,9 @@
 
 int test_sample_rate;
 int test_num_samples;
-int test_array[4080];
+int test_array[11025];
+int bulletNumSamples;
+int bulletSampleRate;
+int bulletSamples[4080];
 
 #endif /* TESTFILE_H_ */

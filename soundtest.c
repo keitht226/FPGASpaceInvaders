@@ -1,5 +1,5 @@
 #include "xparameters.h"
-#include "testFile.h"
+#include "sounds.h"
 #include "xac97_l.h"
 
 int main(){
