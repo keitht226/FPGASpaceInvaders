@@ -11,20 +11,55 @@
 #define ALIEN_BULLET_MAX 200
 #define SAMPLE_MAX 100
 
-
 static uint16_t timer = 1; //general timer. Constantly running in FIT
 static uint16_t mothershipTimer = 1; //timer specifically for mothership. Helps accomodate spontaneous appearance
 static bool first = true; //help setup the FIT the first time
+//static uint32_t mothSoundi, alienSoundi, explosionSoundi, shootSoundi, mothExplosionSoundi = 0;
+static int*samples;
+static int num_samples;
+static bool readyForSound = true;
+static bool firstSound = false;
 
+/*remove when python script works */\
+static int* explosionSamples = test_array;
+static int  explosionNumSamples = 4080;
+static int* alienSamples = test_array;
+static int  alienNumSamples = 4080;
+static int* mothExplosionSamples = test_array;
+static int  mothExplosionNumSamples = 4080;
+static int* mothershipSamples = test_array;
+static int  mothershipNumSamples = 4080;
+static int* bulletSamples = test_array;
+static int  bulletNumSamples = 4080;
+
+//helper function for audio
+static void playSound(int* samples, int num_samples){
+	if(firstSound == false)
+		return;
+	uint32_t stop = 0;
+	static uint32_t i = 0;
+	xil_printf("number of samples: %d\n\r",num_samples);
+	while(i < num_samples && !XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR && stop != SAMPLE_MAX)){
+		xil_printf("stuck in here?\n\r");
+		XAC97_mSetInFifoData(XPAR_AXI_AC97_0_BASEADDR, *(samples+i) << 16 | *(samples+i));
+		i++;
+		stop++;
+	}
+	if(i == num_samples-1){
+		i = 0;
+		readyForSound = true;
+	}
+	return;
+}
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
 	if(globals_tankDeath == running){
-			/*play sound
-			if(!(timer%100)){
-				playSound(explosionSamples, explosionNumSamples);
+			if(readyForSound){
+				samples = explosionSamples;
+				num_samples = explosionNumSamples;
+				readyForSound = false;
 			}
-			 */
             XGpio_InterruptGlobalDisable(&gpPB); // Turn off all PB interrupts for now.
             if(first){
                   timer = 1;
@@ -38,6 +73,7 @@ void timer_interrupt_handler(){
                             write_tank_explosion2();
             }
             else{
+            		//explosionSoundIndex = 0;
                     first = true;
                     timer = 1;
                     globals_tankDeath = stopped;
@@ -82,26 +118,6 @@ void timer_interrupt_handler(){
 	  //ensure random for mothership and alien bullets
 	  srand(timer);
 
-	//move alien block----------------------------------------------------------------------------
-        //if large amount of aliens are dead, move at fastest rate
-	  if(dead_alien_count > DEATH_FOR_FASEST){
-		  if(!(timer%ALIEN_SPEED3)){
-			  moveAlienBlock();
-		  }
-	  }
-          //if medium amount dead, move at medium speed
-	  else if(dead_alien_count > DEATH_FOR_MEDIUM){
-		  if(!(timer%ALIEN_SPEED2)){
-			  moveAlienBlock();
-		  }
-          //otherwise move at slowest rate
-	  }else{
-		  if(!(timer%ALIEN_SPEED1)){
-			  moveAlienBlock();
-		  }
-	  }
-
-
 	//if mothership is present, move mothership-----------------------------------------------------
 	  if(globals_mothershipState == ALIVE && !(timer % MOTHERSHIP_SPEED)){
                 //assign new position for mothership
@@ -115,6 +131,11 @@ void timer_interrupt_handler(){
 		}
 		else
 			write_mothership_to_memory(); //if not at edge, move the ship on screen
+			if(readyForSound){
+				samples = mothershipSamples;
+				num_samples = mothershipNumSamples;
+				readyForSound = false;
+			}
 	  }
 
 
@@ -140,7 +161,13 @@ void timer_interrupt_handler(){
 
 //killed mother ship stuff-------------------------------------------------------------------------
 	  if(beginMotherExplosion){
-                  //draw 150 in place of mothership
+
+		  if(readyForSound){
+			  samples = mothExplosionSamples;
+			  num_samples = mothExplosionNumSamples;
+			  readyForSound = false;
+		  }
+		  //draw 150 in place of mothership
 		  write_mothership_hit_score_to_memory();
                   //delay long enough for user to see
 		  if(alienExplodeCounter < ALIEN_EXPLODE_TIME){
@@ -153,6 +180,43 @@ void timer_interrupt_handler(){
 			  beginMotherExplosion = false; //no longer exploding
 			  mothershipSpawnCounter = rand() % (MOTHERSHIP_MAX + 1 - MOTHERSHIP_MIN) + MOTHERSHIP_MIN;//make new spawn counter
 			  mothershipPosition = 0;//reset position
+		  }
+	  }
+
+	//move alien block----------------------------------------------------------------------------
+		//if large amount of aliens are dead, move at fastest rate
+	  if(dead_alien_count > DEATH_FOR_FASEST){
+		  if(!(timer%ALIEN_SPEED3)){
+			  moveAlienBlock();
+			  if(readyForSound){
+				  firstSound = true;
+				  samples = alienSamples;
+				  num_samples = alienNumSamples;
+				  readyForSound = false;
+			  }
+		  }
+	  }
+		  //if medium amount dead, move at medium speed
+	  else if(dead_alien_count > DEATH_FOR_MEDIUM){
+		  if(!(timer%ALIEN_SPEED2)){
+			  moveAlienBlock();
+			  if(readyForSound){
+				  firstSound = true;
+				  samples = alienSamples;
+				  num_samples = alienSamples;
+				  readyForSound = false;
+			  }
+		  }
+		  //otherwise move at slowest rate
+	  }else{
+		  if(!(timer%ALIEN_SPEED1)){
+			  moveAlienBlock();
+			  if(readyForSound){
+				  firstSound = true;
+				  samples = alienSamples;
+				  num_samples = alienSamples;
+				  readyForSound = false;
+			  }
 		  }
 	  }
 
@@ -172,27 +236,15 @@ void timer_interrupt_handler(){
 		  ++mothershipTimer;//mothership needs its own timer. Appears at unpredictable times
 
 	}
-
+//load sound into fifo------------------------------------------------------------------------------
+  playSound(samples, num_samples);
 //inc timers-------------------------------------------------------------------------------------
   if(timer == UINT16_MAX){ 
     timer = 1;//Reset timer to 1 so as not to mess up mod operations
   }else{
     ++timer;
   }
-}
 
-//helper function for audio
-void playSounnd(int* samples, int num_samples){
-	static uint32_t i = 0;
-	uint32_t stop = 0;
-	while(i < num_samples || !XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR || stop == SAMPLE_MAX)){
-		XAC97_mSetInFifoData(XPAR_AXI_AC97_0_BASEADDR, samples[i] << 16 | samples[i]);
-		i++;
-		stop++;
-	}
-	if(i == num_samples)
-		i = 0;
-	return;
 }
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
