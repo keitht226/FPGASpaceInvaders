@@ -1,4 +1,7 @@
 #include "interrupts.h"
+#include "xparameters.h"
+#include "testFile.h"
+#include "xac97_l.h"
 
 #define DEATH_FOR_FASEST 34
 #define DEATH_FOR_MEDIUM 17
@@ -6,16 +9,22 @@
 #define MOTHERSHIP_EDGE_CORRECTION 6
 #define ALIEN_BULLET_MIN 75
 #define ALIEN_BULLET_MAX 200
+#define SAMPLE_MAX 100
 
 
 static uint16_t timer = 1; //general timer. Constantly running in FIT
 static uint16_t mothershipTimer = 1; //timer specifically for mothership. Helps accomodate spontaneous appearance
 static bool first = true; //help setup the FIT the first time
 
+
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
-        //is the tank explosion running? If so, do nothing else but show the animation
 	if(globals_tankDeath == running){
+			/*play sound
+			if(!(timer%100)){
+				playSound(explosionSamples, explosionNumSamples);
+			}
+			 */
             XGpio_InterruptGlobalDisable(&gpPB); // Turn off all PB interrupts for now.
             if(first){
                   timer = 1;
@@ -172,6 +181,19 @@ void timer_interrupt_handler(){
   }
 }
 
+//helper function for audio
+void playSounnd(int* samples, int num_samples){
+	static uint32_t i = 0;
+	uint32_t stop = 0;
+	while(i < num_samples || !XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR || stop == SAMPLE_MAX)){
+		XAC97_mSetInFifoData(XPAR_AXI_AC97_0_BASEADDR, samples[i] << 16 | samples[i]);
+		i++;
+		stop++;
+	}
+	if(i == num_samples)
+		i = 0;
+	return;
+}
 
 // This is invoked each time there is a change in the button state (result of a push or a bounce).
 // move tank. Creat new tank bullet

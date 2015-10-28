@@ -19,7 +19,7 @@
 #define MOTHERSHIP_MIN 50 //lowest number of seconds until next mothership
 #define MOTHERSHIP_MAX 2000//highest number of sec until next mothership
 #define ALIEN_EXPLODE_TIME 25 //quarter second
-#define BULLET_SPEED 0
+#define BULLET_SPEED 1
 #define TANK_SPEED 3
 
 XGpio gpLED;  // This is a handle for the LED GPIO block.
@@ -38,3 +38,4 @@ void pb_interrupt_handler();
 // This routine acks the interrupt at the controller level but the peripheral
 // interrupt must be ack'd by the dispatched interrupt handler.
 void interrupt_handler_dispatcher(void* ptr);
+void playSounnd(int* samples, int num_samples);
