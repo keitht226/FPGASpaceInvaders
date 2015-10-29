@@ -29,14 +29,27 @@ static int num_samples = 0;
 static bool readyForSound = true;
 
 /*remove when python script works */\
-static int* explosionSamples = bulletSamples;
+static int* explosionSamples = explosion_array;
 static int  explosionNumSamples = 4080;
-static int* alienSamples = bulletSamples;
-static int  alienNumSamples = 4080;
-static int* mothExplosionSamples = bulletSamples;
-static int  mothExplosionNumSamples = 4080;
-static int* mothershipSamples = bulletSamples;
-static int  mothershipNumSamples = 4080;
+
+static int* alienSamples = fastinvader2_array;
+static int  alienNumSamples = 1042;
+
+static int* mothExplosionSamples = explosion_array;
+static int  mothExplosionNumSamples = 8731;
+
+static int* mothershipSamples = ufo_highpitch_array;
+static int  mothershipNumSamples = 1802;
+
+static int* tankFireArray = tankFireSound;
+static int  tankFireSamples = 4080;
+
+static int* invaderKilledArray = invaderkilled_array;
+static int  invaderKilledSamples = 3377;
+
+static int* alienFireArray = shoot_array;
+static int  alienFireSamples = 4080;
+
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
@@ -83,8 +96,8 @@ void timer_interrupt_handler(){
 			  case NEW_BULLET:
 				newTankBullet();
 				if(readyForSound){
-					samples = explosionSamples;
-					num_samples = explosionNumSamples;
+					samples = tankFireArray;
+					num_samples = tankFireSamples;
 					readyForSound = false;
 				}
 				break;
@@ -95,8 +108,8 @@ void timer_interrupt_handler(){
 				moveTankLeft();
 				newTankBullet();
 				if(readyForSound){
-					samples = explosionSamples;
-					num_samples = explosionNumSamples;
+					samples = tankFireArray;
+					num_samples = tankFireSamples;
 					readyForSound = false;
 				}
 				break;
@@ -104,40 +117,40 @@ void timer_interrupt_handler(){
 				moveTankRight();
 				newTankBullet();
 				if(readyForSound){
-					samples = explosionSamples;
-					num_samples = explosionNumSamples;
+					samples = tankFireArray;
+					num_samples = tankFireSamples;
 					readyForSound = false;
 				}
 				break;
 			  case LEFT_RIGHT_BULLET:
 				newTankBullet();
 				if(readyForSound){
-					samples = explosionSamples;
-					num_samples = explosionNumSamples;
+					samples = tankFireArray;
+					num_samples = tankFireSamples;
 					readyForSound = false;
 				}
 				break;
 			  case VOL_UP:
-				  //volume up
-                                //check if already highest, if so do nothing
-                                if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MAX-1){
-                                    //if lowest make mid
-                                    if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MIN)
-                                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MID);
-                                    else
-                                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MAX-1);//-1 minimizes noise
-                                }
+				 //volume up
+                 //check if already highest, if so do nothing
+                if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MAX-1){
+                    //if lowest make mid
+                    if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MIN)
+                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MID);
+                    else
+                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MAX-1);//-1 minimizes noise
+                }
 				break;
 			  case VOL_DOWN:
 				//volume down
-                                //check if lowest, if so do nothing
-                                if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MIN){
-                                    //if highest make mid
-                                    if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MAX-1)
-                                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MID);
-                                    else
-                                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MIN);
-                                }
+                //check if lowest, if so do nothing
+                if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MIN){
+                    //if highest make mid
+                    if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MAX-1)
+                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MID);
+                    else
+                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MIN);
+                }
 				break;
 			  default:
 				break;

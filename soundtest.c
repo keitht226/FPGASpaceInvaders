@@ -21,8 +21,8 @@ int main(){
 
 	while(1){
 		while(!XAC97_isInFIFOFull(XPAR_AXI_AC97_0_BASEADDR)){
-			XAC97_mSetInFifoData(XPAR_AXI_AC97_0_BASEADDR, test_array[i] << 16 | test_array[i]);
-			if(i < test_num_samples-1)
+			XAC97_mSetInFifoData(XPAR_AXI_AC97_0_BASEADDR, hey_array[i] << 16 | hey_array[i]);
+			if(i < hey_num_samples-1)
 				i++;
 			else
 				i = 0;
