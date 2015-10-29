@@ -38,3 +38,4 @@ void pb_interrupt_handler();
 // This routine acks the interrupt at the controller level but the peripheral
 // interrupt must be ack'd by the dispatched interrupt handler.
 void interrupt_handler_dispatcher(void* ptr);
+void sound_interrupt_handler();

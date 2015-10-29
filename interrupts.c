@@ -10,6 +10,15 @@
 #define ALIEN_BULLET_MIN 75
 #define ALIEN_BULLET_MAX 200
 #define MAX_NUM_SAMPLES 100
+/*button bit masks-----------------------------------------------------------------*/
+#define VOL_DOWN 0x010 
+#define VOL_UP 0x004 
+#define MOV_LEFT 0x008
+#define MOV_RIGHT 0x002
+#define NEW_BULLET 0x001
+#define STRAFE_LEFT 0x009
+#define STRAFE_RIGHT 0x003
+#define LEFT_RIGHT_BULLET 0x00B
 
 static uint16_t timer = 1; //general timer. Constantly running in FIT
 static uint16_t mothershipTimer = 1; //timer specifically for mothership. Helps accomodate spontaneous appearance
@@ -68,10 +77,10 @@ void timer_interrupt_handler(){
 	    // allow user to use buttons, even multiple at once. All three at once don't move the tank but do shoot a bullet
 	    if(!(timer % TANK_SPEED)){
 			switch(currentButtonState){
-			  case 8:
+			  case MOV_LEFT:
 				moveTankLeft();
 				break;
-			  case 1:
+			  case NEW_BULLET:
 				newTankBullet();
 				if(readyForSound){
 					samples = explosionSamples;
@@ -79,10 +88,10 @@ void timer_interrupt_handler(){
 					readyForSound = false;
 				}
 				break;
-			  case 2:
+			  case MOV_RIGHT:
 				moveTankRight();
 				break;
-			  case 9:
+			  case STRAFE_LEFT:
 				moveTankLeft();
 				newTankBullet();
 				if(readyForSound){
@@ -91,7 +100,7 @@ void timer_interrupt_handler(){
 					readyForSound = false;
 				}
 				break;
-			  case 3:
+			  case STRAFE_RIGHT:
 				moveTankRight();
 				newTankBullet();
 				if(readyForSound){
@@ -100,7 +109,7 @@ void timer_interrupt_handler(){
 					readyForSound = false;
 				}
 				break;
-			  case 11:
+			  case LEFT_RIGHT_BULLET:
 				newTankBullet();
 				if(readyForSound){
 					samples = explosionSamples;
@@ -108,12 +117,28 @@ void timer_interrupt_handler(){
 					readyForSound = false;
 				}
 				break;
-			  case 4:
+			  case VOL_UP:
 				  //volume up
-				  break;
-			  case 16:
-				  //volume down
-				  break;
+                                //check if already highest, if so do nothing
+                                if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MAX-1){
+                                    //if lowest make mid
+                                    if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MIN)
+                                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MID);
+                                    else
+                                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MAX-1);//-1 minimizes noise
+                                }
+				break;
+			  case VOL_DOWN:
+				//volume down
+                                //check if lowest, if so do nothing
+                                if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MIN){
+                                    //if highest make mid
+                                    if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MAX-1)
+                                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MID);
+                                    else
+                                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MIN);
+                                }
+				break;
 			  default:
 				break;
 			}
