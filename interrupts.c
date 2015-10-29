@@ -11,8 +11,8 @@
 #define ALIEN_BULLET_MAX 200
 #define MAX_NUM_SAMPLES 100
 /*button bit masks-----------------------------------------------------------------*/
-#define VOL_DOWN 0x010 
-#define VOL_UP 0x004 
+#define VOL_DOWN 0x004
+#define VOL_UP 0x010
 #define MOV_LEFT 0x008
 #define MOV_RIGHT 0x002
 #define NEW_BULLET 0x001
@@ -28,28 +28,49 @@ static int*samples = 0;
 static int num_samples = 0;
 static bool readyForSound = true;
 
-/*remove when python script works */\
-static int* explosionSamples = explosion_array;
-static int  explosionNumSamples = 4080;
+static int* explosionSamples;
+static int  explosionNumSamples;
 
-static int* alienSamples = fastinvader2_array;
-static int  alienNumSamples = 1042;
+static int* alienSamples;
+static int  alienNumSamples;
 
-static int* mothExplosionSamples = explosion_array;
-static int  mothExplosionNumSamples = 8731;
+static int* mothExplosionSamples;
+static int  mothExplosionNumSamples;
 
-static int* mothershipSamples = ufo_highpitch_array;
-static int  mothershipNumSamples = 1802;
+static int* mothershipSamples;
+static int  mothershipNumSamples;
 
-static int* tankFireArray = tankFireSound;
-static int  tankFireSamples = 4080;
+static int* tankFireArray;
+static int  tankFireSamples;
 
-static int* invaderKilledArray = invaderkilled_array;
-static int  invaderKilledSamples = 3377;
+static int* invaderKilledArray;
+static int  invaderKilledSamples;
 
-static int* alienFireArray = shoot_array;
-static int  alienFireSamples = 4080;
+static int* alienFireArray;
+static int  alienFireSamples;
 
+void init_interrupts(){
+	explosionSamples = explosion_array;
+	explosionNumSamples = explosion_num_samples;
+
+	alienSamples = fastinvader2_array;
+	alienNumSamples = fastinvader2_num_samples;
+
+	mothExplosionSamples = explosion_array;
+	mothExplosionNumSamples = explosion_num_samples;
+
+	mothershipSamples = ufo_highpitch_array;
+	mothershipNumSamples = ufo_highpitch_num_samples;
+
+	tankFireArray = tankFireSound;
+	tankFireSamples = tankFireSoundFrames;
+
+	invaderKilledArray = invaderkilled_array;
+	invaderKilledSamples = invaderkilled_num_samples;
+
+	alienFireArray = shoot_array;
+	alienFireSamples = shoot_num_samples;
+}
 
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
@@ -94,64 +115,100 @@ void timer_interrupt_handler(){
 				moveTankLeft();
 				break;
 			  case NEW_BULLET:
-				newTankBullet();
-				if(readyForSound){
+				if(readyForSound && tankBulletOffscreen){
 					samples = tankFireArray;
 					num_samples = tankFireSamples;
 					readyForSound = false;
 				}
+				newTankBullet();
 				break;
 			  case MOV_RIGHT:
 				moveTankRight();
 				break;
 			  case STRAFE_LEFT:
 				moveTankLeft();
-				newTankBullet();
-				if(readyForSound){
+				if(readyForSound && tankBulletOffscreen){
 					samples = tankFireArray;
 					num_samples = tankFireSamples;
 					readyForSound = false;
 				}
+				newTankBullet();
 				break;
 			  case STRAFE_RIGHT:
 				moveTankRight();
-				newTankBullet();
-				if(readyForSound){
+				if(readyForSound && tankBulletOffscreen){
 					samples = tankFireArray;
 					num_samples = tankFireSamples;
 					readyForSound = false;
 				}
+				newTankBullet();
 				break;
 			  case LEFT_RIGHT_BULLET:
-				newTankBullet();
-				if(readyForSound){
+				if(readyForSound && tankBulletOffscreen){
 					samples = tankFireArray;
 					num_samples = tankFireSamples;
 					readyForSound = false;
 				}
+				newTankBullet();
 				break;
 			  case VOL_UP:
+			  {
 				 //volume up
+					///int sound = 0;
+					//sound = (int) XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol);
+					//xil_printf("SoundUp: current: %d\n\r", sound);
                  //check if already highest, if so do nothing
-                if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MAX-1){
+                if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MAX){
                     //if lowest make mid
                     if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MIN)
+                    {
                         XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MID);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, AC97_VOL_MID);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVolMono, AC97_VOL_MID);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_PCMOutVol, AC97_VOL_MID);
+                    }
+
                     else
-                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MAX-1);//-1 minimizes noise
+                    {
+                        XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MAX);//-1 minimizes noise
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, AC97_VOL_MAX);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVolMono, AC97_VOL_MAX);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_PCMOutVol, AC97_VOL_MAX);
+                    }
                 }
+
+				//sound = (int) XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol);
+				//xil_printf("SoundUp: after: %d\n\r", sound);
 				break;
+			  }
 			  case VOL_DOWN:
+			  {
 				//volume down
+					//int sound = 0;
+					//sound = (int) XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol);
+					//xil_printf("SoundDown: current: %d\n\r", sound);
                 //check if lowest, if so do nothing
                 if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) != AC97_VOL_MIN){
                     //if highest make mid
-                    if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MAX-1)
+                    if(XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol) == AC97_VOL_MAX)
+                    {
                         XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MID);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, AC97_VOL_MID);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVolMono, AC97_VOL_MID);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_PCMOutVol, AC97_VOL_MID);
+                    }
                     else
+                    {
                         XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol, AC97_VOL_MIN);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVol, AC97_VOL_MIN);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_MasterVolMono, AC97_VOL_MIN);
+						XAC97_WriteReg(XPAR_AXI_AC97_0_BASEADDR, AC97_PCMOutVol, AC97_VOL_MIN);
+                    }
                 }
+				//sound = (int) XAC97_ReadReg(XPAR_AXI_AC97_0_BASEADDR, AC97_AuxOutVol);
+				//xil_printf("SoundDown: after: %d\n\r", sound);
 				break;
+			  }
 			  default:
 				break;
 			}
@@ -191,6 +248,11 @@ void timer_interrupt_handler(){
 	//stall deleting alien long enough to see explosion---------------------------------------------
 	  if(beginAlienExplosion){
                   //stall till explosion done
+		  if(readyForSound){
+			  samples = invaderKilledArray;
+			  num_samples = invaderKilledSamples;
+			  readyForSound = false;
+		  }
 		  if(alienExplodeCounter < ALIEN_EXPLODE_TIME){
 			  ++alienExplodeCounter;
 		  }
@@ -273,6 +335,11 @@ void timer_interrupt_handler(){
 
 	//create new alien bullet-----------------------------------------------------------------------
 	  if(!(timer % (rand()%(ALIEN_BULLET_MAX+1-ALIEN_BULLET_MIN)+ALIEN_BULLET_MIN))){//new alien bullet from 2-5 seconds
+		  if(readyForSound){
+			  samples = alienFireArray;
+			  num_samples = alienFireSamples;
+			  readyForSound = false;
+		  }
 		 newAlienBullet();
 	  }
 

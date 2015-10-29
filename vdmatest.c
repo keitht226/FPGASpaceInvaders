@@ -115,6 +115,7 @@ int main()
      globals_bullets[2].offScreen = true;
      globals_bullets[3].offScreen = true;
      init_monitor();
+     init_interrupts();
      /*          end initialization               */
 
     /************ lab4 setup interrupts and GPIO *************************/
