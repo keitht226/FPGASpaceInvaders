@@ -169,6 +169,8 @@ typedef struct{
   unsigned short y;
 } point_t;
 
+//point_t current_dead_alien;//
+
 //used for alien bullets
 typedef struct{
   uint8_t type;

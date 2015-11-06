@@ -133,6 +133,7 @@ void killAlien(unsigned short x, unsigned short y){
   }
   beginAlienExplosion = true; //signal used in FIT. Gives enough time to see explosion
   write_explosion_to_memory(globals_alien); //draw the explosion
+  //current_dead_alien = globals_getAlienPosition(globals_alien);//
   //give scores based on alien type
   if(row == 0){
 	  score += TOP_ALIEN_SCORE;

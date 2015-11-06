@@ -19,6 +19,7 @@
 #define MOTHERSHIP_MIN 50 //lowest number of seconds until next mothership
 #define MOTHERSHIP_MAX 2000//highest number of sec until next mothership
 #define ALIEN_EXPLODE_TIME 25 //quarter second
+#define MOTHERSHIP_EXPLODE_TIME 25
 #define BULLET_SPEED 1
 #define TANK_SPEED 3
 

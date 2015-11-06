@@ -176,6 +176,7 @@ void write_alien_dead_to_memory(int alien_index) {
 	//	block_x = alien_block.x;
 	//	block_y = alien_block.y;
 		point_t p = globals_getAlienPosition(alien_index);
+		//point_t p = current_dead_alien;//
 		int row_offset = p.y;
 		int col_offset = p.x;
 	//	row_offset = block_y + (alien_index / COLUMNS_OF_ALIENS) * ALIEN_ROW +(alien_index/COLUMNS_OF_ALIENS);// ALIEN_ROW_SEPARATION * (alien_index/numberOfCol);

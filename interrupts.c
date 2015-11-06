@@ -46,7 +46,7 @@ static int  alienFireSamples = 4080;
 //update bullets, move aliens, move motherhsip, make new alien bullet if less than 4 on screen
 void timer_interrupt_handler(){
 
-
+	//xil_printf("Interrupt Handler\n\r");
 	//xil_printf("firstSound: %d\n\r",firstSound);
 	if(globals_tankDeath == running){
 			if(readyForSound){
@@ -190,11 +190,11 @@ void timer_interrupt_handler(){
 		  //draw 150 in place of mothership
 		  write_mothership_hit_score_to_memory();
                   //delay long enough for user to see
-		  if(alienExplodeCounter < ALIEN_EXPLODE_TIME){
+		  if(alienExplodeCounter < MOTHERSHIP_EXPLODE_TIME){
 			  ++alienExplodeCounter;
 		  }
                   //delay limit reached
-		  if(alienExplodeCounter == ALIEN_EXPLODE_TIME){
+		  if(alienExplodeCounter == MOTHERSHIP_EXPLODE_TIME){
 			  write_mothership_black_to_memory(); //erase score
 			  alienExplodeCounter = 1; //reset counter
 			  beginMotherExplosion = false; //no longer exploding

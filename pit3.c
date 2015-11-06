@@ -16,20 +16,17 @@
 
 
 void set_delay(int delay){
-
-	//xil_printf("set_delay int right before set: %d\n\r",delay);
 	Xil_Out32(XPAR_PIT3_0_BASEADDR+4, delay);
-	//xil_printf("set_delay memory right after set: %d\n\r",Xil_In32(XPAR_PIT3_0_BASEADDR+4));
 	return;
 }
 
+/*7 sets everything, 5 will disable the interrupt, 2 will enable the interrupt*/
 void set_pit_control(int mask){
 		PIT3_mWriteSlaveReg0(XPAR_PIT3_0_BASEADDR, 0, mask);
 }
 
 
 void delay_prompt(){
-	//setvbuf(stdin, NULL, _IOLBF, 10);
 	char delay_array[10];
 	int delay = 0;
 	xil_printf("Game speed?:\n\r");
@@ -43,9 +40,6 @@ void delay_prompt(){
 	xil_printf("entered %d\n\r",delay);
 
 	set_delay(delay);
-	//xil_printf("delay int = %d\n\r",delay);
-	//xil_printf("delay reg = %d\n\r"),Xil_In32(XPAR_PIT3_0_BASEADDR+4);
-	//setvbuf(stdin, NULL, _IONBF, 0);
 }
 
 /************************** Function Definitions ***************************/
