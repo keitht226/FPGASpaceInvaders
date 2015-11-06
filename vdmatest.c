@@ -19,6 +19,7 @@
 #include "xintc_l.h"        // Provides handy macros for the interrupt controller.
 #include "interrupts.h"
 #include "xac97_l.h"
+#include "pit3.h"
 #define DEBUG false
 
 void print(char *str);
@@ -115,7 +116,6 @@ int main()
      globals_bullets[2].offScreen = true;
      globals_bullets[3].offScreen = true;
      init_monitor();
-     init_interrupts();
      /*          end initialization               */
 
     /************ lab4 setup interrupts and GPIO *************************/
@@ -130,9 +130,17 @@ int main()
     // Enable all interrupts in the push button peripheral.
     XGpio_InterruptEnable(&gpPB, 0xFFFFFFFF);
 
+	/******************* Lab 6 initialization PIT *****************************/
+    //xil_printf("stuck here?\n\r");
+//delay - write
+ 	delay_prompt();
+	set_pit_control(7);
+	/*************************************************************************/
+
     microblaze_register_handler(interrupt_handler_dispatcher, NULL);
+    //| XPAR_FIT_TIMER_0_INTERRUPT_MASK
     XIntc_EnableIntr(XPAR_INTC_0_BASEADDR,
-    		(XPAR_FIT_TIMER_0_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK | XPAR_AXI_AC97_0_INTERRUPT_MASK));
+    		(XPAR_PIT3_0_PIT_INTERRUPT_MASK | XPAR_PUSH_BUTTONS_5BITS_IP2INTC_IRPT_MASK | XPAR_AXI_AC97_0_INTERRUPT_MASK));
     XIntc_MasterEnable(XPAR_INTC_0_BASEADDR);
     microblaze_enable_interrupts();
 
@@ -151,8 +159,15 @@ int main()
 
     /*********** end setup ***********************************************/
 
+	char delay;
      while (1) {
-
+    	 setvbuf(stdin,NULL,_IOLBF,1);
+     	if((delay = getchar()) == 'q'){
+     		set_pit_control(5); //disables interrupts
+     		delay_prompt();
+     		set_pit_control(7); //enable interrupts
+     	}
+     	setvbuf(stdin, NULL, _IONBF, 0);
          //frameIndex = (frameIndex + 1) % 2;  // Alternate between frame 0 and frame 1.
          if (XST_FAILURE == XAxiVdma_StartParking(&videoDMAController, frameIndex,  XAXIVDMA_READ)) {
         	 xil_printf("vdma parking failed\n\r");

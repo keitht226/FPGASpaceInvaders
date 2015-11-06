@@ -10,9 +10,9 @@
 #include "globals.h"
 
 //moves about every half_second
-#define ALIEN_SPEED1 50
-#define ALIEN_SPEED2 40
-#define ALIEN_SPEED3 30
+#define ALIEN_SPEED1 30
+#define ALIEN_SPEED2 20
+#define ALIEN_SPEED3 10
 //faster than alien speed by considerable amount
 #define MOTHERSHIP_SPEED 5
 #define EXPLODE_TIME 200 //explode time for tank
@@ -38,4 +38,3 @@ void pb_interrupt_handler();
 // This routine acks the interrupt at the controller level but the peripheral
 // interrupt must be ack'd by the dispatched interrupt handler.
 void interrupt_handler_dispatcher(void* ptr);
-void sound_interrupt_handler();
